@@ -15,6 +15,11 @@ public class BishopMoveCalculator extends MoveCalculator {
   }
 
   public ArrayList<ChessMove> CalculateValidMoves(){
-    return new ArrayList<>();
+    ChessPosition start = new ChessPosition(1,1);
+    ChessPosition end = new ChessPosition(2,2);
+    ChessMove testMove = new ChessMove(start,end,null);
+    ArrayList<ChessMove> moveList = new ArrayList<>();
+    moveList.add(testMove);
+    return moveList;
   }
 }

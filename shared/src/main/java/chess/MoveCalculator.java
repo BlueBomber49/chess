@@ -20,6 +20,14 @@ public class MoveCalculator {
       this.position = position;
   }
 
+  public ArrayList<ChessMove> GetMoves(){
+    if(pieceType == ChessPiece.PieceType.BISHOP){
+      BishopMoveCalculator calc = new BishopMoveCalculator(board, pieceType, color, position);
+      validMoves = calc.CalculateValidMoves();
+    }
+    return validMoves;
+  }
+
 
 
 }
