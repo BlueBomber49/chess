@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public class BishopMoveCalculator extends MoveCalculator {
 
+
   /**
    * @param board
    * @param pieceType
@@ -15,7 +16,7 @@ public class BishopMoveCalculator extends MoveCalculator {
   }
 
   public ArrayList<ChessMove> CalculateValidMoves(){
-    ChessPosition start = new ChessPosition(1,1);
+    ChessPosition start = super.position;
     ChessPosition end = new ChessPosition(2,2);
     ChessMove testMove = new ChessMove(start,end,null);
     ArrayList<ChessMove> moveList = new ArrayList<>();

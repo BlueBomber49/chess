@@ -3,11 +3,11 @@ package chess;
 import java.util.ArrayList;
 
 public class MoveCalculator {
-  private ChessBoard board;
-  private final ChessPiece.PieceType pieceType;
-  private final ChessGame.TeamColor color;
-  private ChessPosition position;
-  private ArrayList<ChessMove> validMoves;
+  protected ChessBoard board;
+  protected final ChessPiece.PieceType pieceType;
+  protected final ChessGame.TeamColor color;
+  protected ChessPosition position;
+  protected ArrayList<ChessMove> validMoves;
   /**
 
 
