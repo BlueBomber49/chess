@@ -1,8 +1,11 @@
-package chess;
+package chess.MoveCalculators;
+
+import chess.*;
+import chess.MoveCalculators.MoveCalculator;
 
 import java.util.ArrayList;
 
-public class KingMoveCalculator extends MoveCalculator{
+public class KingMoveCalculator extends MoveCalculator {
   /**
    * @param board
    * @param pieceType

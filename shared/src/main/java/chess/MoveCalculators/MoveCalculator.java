@@ -1,4 +1,6 @@
-package chess;
+package chess.MoveCalculators;
+
+import chess.*;
 
 import java.util.ArrayList;
 
