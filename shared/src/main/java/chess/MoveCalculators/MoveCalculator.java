@@ -23,14 +23,32 @@ public class MoveCalculator {
   }
 
   public ArrayList<ChessMove> GetMoves(){
-    if(pieceType == ChessPiece.PieceType.BISHOP){
-      BishopMoveCalculator calc = new BishopMoveCalculator(board, pieceType, color, position);
-      validMoves = calc.CalculateValidMoves();
-    }
-    else if(pieceType == ChessPiece.PieceType.KING){
+    if(pieceType == ChessPiece.PieceType.KING){
       KingMoveCalculator calc = new KingMoveCalculator(board, pieceType, color, position);
       validMoves = calc.CalculateValidMoves();
     }
+    else if(pieceType == ChessPiece.PieceType.QUEEN){
+      QueenMoveCalculator calc = new QueenMoveCalculator(board, pieceType, color, position);
+      validMoves = calc.CalculateValidMoves();
+    }
+    else if(pieceType == ChessPiece.PieceType.BISHOP){
+      BishopMoveCalculator calc = new BishopMoveCalculator(board, pieceType, color, position);
+      validMoves = calc.CalculateValidMoves();
+    }
+    else if(pieceType == ChessPiece.PieceType.KNIGHT){
+      KnightMoveCalculator calc = new KnightMoveCalculator(board, pieceType, color, position);
+      validMoves = calc.CalculateValidMoves();
+    }
+    else if(pieceType == ChessPiece.PieceType.ROOK){
+      RookMoveCalculator calc = new RookMoveCalculator(board, pieceType, color, position);
+      validMoves = calc.CalculateValidMoves();
+    }
+    else if(pieceType == ChessPiece.PieceType.PAWN){
+      PawnMoveCalculator calc = new PawnMoveCalculator(board, pieceType, color, position);
+      validMoves = calc.CalculateValidMoves();
+    }
+
+
     else{
       throw new RuntimeException("Piece Type undefined");
     }
