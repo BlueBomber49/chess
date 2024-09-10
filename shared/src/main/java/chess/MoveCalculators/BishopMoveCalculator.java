@@ -30,12 +30,12 @@ public class BishopMoveCalculator extends MoveCalculator {
         ChessMove moveToAdd = new ChessMove(start,end,null);
         moveList.add(moveToAdd);
       }
-      else if(board.getPiece(end).getTeamColor() != color){ //Opponent's piece on end space
+      else if(board.getPiece(end).getTeamColor() != color){ //Opponent's piece on target
         ChessMove moveToAdd = new ChessMove(start,end,null);
         moveList.add(moveToAdd);
         break;
       }
-      else{ //Friendly piece on end space
+      else{ //Friendly piece on target
         break;
       }
     }
@@ -48,12 +48,12 @@ public class BishopMoveCalculator extends MoveCalculator {
         ChessMove moveToAdd = new ChessMove(start,end,null);
         moveList.add(moveToAdd);
       }
-      else if(board.getPiece(end).getTeamColor() != color){ //Opponent's piece on end space
+      else if(board.getPiece(end).getTeamColor() != color){ //Opponent's piece on target
         ChessMove moveToAdd = new ChessMove(start,end,null);
         moveList.add(moveToAdd);
         break;
       }
-      else{ //Friendly piece on end space
+      else{ //Friendly piece on target
         break;
       }
     }
@@ -66,12 +66,12 @@ public class BishopMoveCalculator extends MoveCalculator {
         ChessMove moveToAdd = new ChessMove(start,end,null);
         moveList.add(moveToAdd);
       }
-      else if(board.getPiece(end).getTeamColor() != color){ //Opponent's piece on end space
+      else if(board.getPiece(end).getTeamColor() != color){ //Opponent's piece on target
         ChessMove moveToAdd = new ChessMove(start,end,null);
         moveList.add(moveToAdd);
         break;
       }
-      else{ //Friendly piece on end space
+      else{ //Friendly piece on target
         break;
       }
     }
@@ -84,12 +84,12 @@ public class BishopMoveCalculator extends MoveCalculator {
         ChessMove moveToAdd = new ChessMove(start,end,null);
         moveList.add(moveToAdd);
       }
-      else if(board.getPiece(end).getTeamColor() != color){ //Opponent's piece on end space
+      else if(board.getPiece(end).getTeamColor() != color){ //Opponent's piece on target
         ChessMove moveToAdd = new ChessMove(start,end,null);
         moveList.add(moveToAdd);
         break;
       }
-      else{ //Friendly piece on end space
+      else{ //Friendly piece on target
         break;
       }
     }
