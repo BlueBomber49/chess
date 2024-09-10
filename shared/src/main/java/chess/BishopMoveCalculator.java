@@ -17,10 +17,16 @@ public class BishopMoveCalculator extends MoveCalculator {
 
   public ArrayList<ChessMove> CalculateValidMoves(){
     ChessPosition start = super.position;
-    ChessPosition end = new ChessPosition(2,2);
-    ChessMove testMove = new ChessMove(start,end,null);
+    ChessPosition end = start;
     ArrayList<ChessMove> moveList = new ArrayList<>();
-    moveList.add(testMove);
+
+    while(end.getRow() < 8 && end.getColumn() < 8){ //Increase row and column (Upward right diagonal)
+      end = new ChessPosition(end.getRow()+1, end.getColumn()+1);
+      if(board.getPiece(end) == null){
+        ChessMove moveToAdd = new ChessMove(start,end,null);
+        moveList.add(moveToAdd);
+      }
+    }
     return moveList;
   }
 }
