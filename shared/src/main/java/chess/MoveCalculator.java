@@ -25,6 +25,14 @@ public class MoveCalculator {
       BishopMoveCalculator calc = new BishopMoveCalculator(board, pieceType, color, position);
       validMoves = calc.CalculateValidMoves();
     }
+    else if(pieceType == ChessPiece.PieceType.KING){
+      KingMoveCalculator calc = new KingMoveCalculator(board, pieceType, color, position);
+      validMoves = calc.CalculateValidMoves();
+    }
+    else{
+      throw new RuntimeException("Piece Type undefined");
+    }
+
     return validMoves;
   }
 

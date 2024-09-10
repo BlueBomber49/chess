@@ -13,6 +13,9 @@ public class ChessPosition { //COMPLETE
     private final int col;
 
     public ChessPosition(int row, int col) {
+        if(row < 1 || row > 8 || col < 1 || col > 8){
+            throw new RuntimeException("Attempt to create an illegal chess position");
+        }
         this.row = row;
         this.col = col;
     }
