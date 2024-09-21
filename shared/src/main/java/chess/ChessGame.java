@@ -15,7 +15,7 @@ public class ChessGame {
 
     public ChessGame() {
         gameBoard = new ChessBoard();
-        gameBoard.resetBoard();
+        //gameBoard.resetBoard();
         currentTurn = TeamColor.WHITE;
     }
 
@@ -51,7 +51,14 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = gameBoard.getPiece(startPosition);
+        Collection<ChessMove> ChessMoves = piece.pieceMoves(gameBoard, startPosition);
+        TeamColor team=getTeamTurn();
+        for(var move : ChessMoves){
+            //Check for if you would be in check if you make that move with that piece
+            break;
+        }
+        return ChessMoves;
     }
 
     /**

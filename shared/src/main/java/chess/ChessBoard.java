@@ -3,6 +3,8 @@ package chess;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import static java.util.Objects.isNull;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -87,5 +89,22 @@ public class ChessBoard {
     @Override
     public int hashCode() {
         return Arrays.deepHashCode(squares);
+    }
+
+    @Override
+    public String toString() {
+        String board = "";
+        for(var row : squares){
+            board += "|";
+            for(var columnPiece : row){
+                if(isNull(columnPiece)){
+                    board += " |";
+                } else{
+                    board += columnPiece.toString() + "|";
+                }
+            }
+            board += "|%n";
+        }
+        return board;
     }
 }
