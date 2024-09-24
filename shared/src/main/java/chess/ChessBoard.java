@@ -103,7 +103,7 @@ public class ChessBoard {
                     board += columnPiece.toString() + "|";
                 }
             }
-            board += "|%n";
+            board += "\n";
         }
         return board;
     }

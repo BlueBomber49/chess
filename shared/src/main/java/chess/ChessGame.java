@@ -102,6 +102,10 @@ public class ChessGame {
 
     }
 
+    public Collection<ChessMove> getAllTeamMoves(TeamColor color){
+        //For each piece of a given team, get all of their moves.
+    }
+
     /**
      * Determines if the given team is in check
      *
