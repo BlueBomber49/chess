@@ -47,8 +47,6 @@ public class MoveCalculator {
       PawnMoveCalculator calc = new PawnMoveCalculator(board, pieceType, color, position);
       validMoves = calc.CalculateValidMoves();
     }
-
-
     else{
       throw new RuntimeException("Piece Type undefined");
     }

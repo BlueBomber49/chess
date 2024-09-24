@@ -15,7 +15,7 @@ public class ChessGame {
 
     public ChessGame() {
         gameBoard = new ChessBoard();
-        //gameBoard.resetBoard();
+        gameBoard.resetBoard();
         currentTurn = TeamColor.WHITE;
     }
 
@@ -52,8 +52,13 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece piece = gameBoard.getPiece(startPosition);
+        if(piece == null){
+            return null;
+        }
+
         Collection<ChessMove> ChessMoves = piece.pieceMoves(gameBoard, startPosition);
-        TeamColor team=getTeamTurn();
+
+        TeamColor team = getTeamTurn();
         for(var move : ChessMoves){
             //Check for if you would be in check if you make that move with that piece
             break;
@@ -68,7 +73,33 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPiece piece = gameBoard.getPiece(move.getStartPosition());
+        if(piece == null){
+            throw new InvalidMoveException("No piece selected");
+        }
+        if(piece.getTeamColor() != getTeamTurn()){
+            throw new InvalidMoveException("Not your turn");
+        }
+
+        if(validMoves(move.getStartPosition()).contains(move)){
+            if(move.getPromotionPiece() == null) {
+                gameBoard.addPiece(move.getEndPosition(), piece);
+                gameBoard.addPiece(move.getStartPosition(), null);
+            }
+            else{
+                gameBoard.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
+                gameBoard.addPiece(move.getStartPosition(), null);
+            }
+        }
+        else{
+            throw new InvalidMoveException("Invalid Move");
+        }
+        if(getTeamTurn() == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        } else{
+          setTeamTurn(TeamColor.WHITE);
+        }
+
     }
 
     /**
