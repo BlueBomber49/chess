@@ -82,14 +82,7 @@ public class ChessGame {
         }
 
         if(validMoves(move.getStartPosition()).contains(move)){
-            if(move.getPromotionPiece() == null) {
-                gameBoard.addPiece(move.getEndPosition(), piece);
-                gameBoard.addPiece(move.getStartPosition(), null);
-            }
-            else{
-                gameBoard.addPiece(move.getEndPosition(), new ChessPiece(piece.getTeamColor(), move.getPromotionPiece()));
-                gameBoard.addPiece(move.getStartPosition(), null);
-            }
+                gameBoard.movePiece(move);
         }
         else{
             throw new InvalidMoveException("Invalid Move");
@@ -103,6 +96,7 @@ public class ChessGame {
     }
 
     public Collection<ChessMove> getAllTeamMoves(TeamColor color){
+        return null;
         //For each piece of a given team, get all of their moves.
     }
 

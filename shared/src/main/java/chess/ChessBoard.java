@@ -37,6 +37,27 @@ public class ChessBoard {
     public ChessPiece getPiece(ChessPosition position) {
     return squares[position.getRow()-1][position.getColumn()-1];
     }
+
+    public void movePiece(ChessMove move) throws InvalidMoveException {
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        ChessPiece.PieceType promotionPiece = move.getPromotionPiece();
+
+        if(squares[start.getRow()-1][start.getColumn()-1] == null){
+            throw new InvalidMoveException("No piece in start position for move");
+        }
+
+        ChessGame.TeamColor color = getPiece(start).getTeamColor();
+
+        if(promotionPiece == null){
+            addPiece(end, getPiece(start));
+        }
+        else{
+            addPiece(end, new ChessPiece(color, promotionPiece));
+        }
+        addPiece(start, null);
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
