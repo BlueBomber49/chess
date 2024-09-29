@@ -15,11 +15,15 @@ public class ChessGame {
 
     private ChessBoard gameBoard;
     private TeamColor currentTurn;
+    private boolean whiteCanCastle;
+    private boolean blackCanCastle;
 
     public ChessGame() {
         gameBoard = new ChessBoard();
         gameBoard.resetBoard();
         currentTurn = TeamColor.WHITE;
+        whiteCanCastle = true;
+        blackCanCastle = true;
     }
 
     /**
@@ -108,8 +112,14 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid Move");
         }
         if(getTeamTurn() == TeamColor.WHITE) {
+            if(piece.getPieceType() == ChessPiece.PieceType.KING){
+                whiteCanCastle = false;
+            }
             setTeamTurn(TeamColor.BLACK);
         } else{
+            if(piece.getPieceType() == ChessPiece.PieceType.KING){
+                blackCanCastle = false;
+            }
           setTeamTurn(TeamColor.WHITE);
         }
 
