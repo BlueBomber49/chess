@@ -19,6 +19,14 @@ public class ChessBoard {
         
     }
 
+    public ChessBoard(ChessBoard original){
+    for(int row = 0; row < 7; row++){
+        for(int col = 0; col < 7; col++){
+            this.squares[row][col] = original.squares[row][col];
+        }
+    }
+    }
+
     /**
      * Adds a chess piece to the chessboard
      *
