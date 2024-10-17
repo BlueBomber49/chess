@@ -1,5 +1,6 @@
 package server;
 
+import com.google.gson.Gson;
 import service.*;
 import spark.*;
 
@@ -8,6 +9,8 @@ public class Server {
     private AuthService auth;
     private GameService game;
     private UserService user;
+
+    private Gson serializer = new Gson();
 
     public Server(){
         this.admin = new AdminService();
@@ -39,4 +42,7 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
+
+
+
 }
