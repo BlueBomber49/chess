@@ -11,11 +11,13 @@ public class DataAccessTests {
   DataAccess data;
   UserData bob;
   UserData felix;
+  AuthData auth;
   @BeforeEach
   public void setup(){
     data = new MemoryDataAccess();
     bob = new UserData("bob", "canwefixit", "yes@wecan");
-    felix = new UserData("felix", "icanfixit", "im@gonnawreckit");
+    felix = new UserData("felix", "icanfixit", "gonn@wreckit");
+    auth = new AuthData("supahsecuretoken", "bob");
   }
 
   @Test
@@ -31,6 +33,21 @@ public class DataAccessTests {
     assertEquals(felix, data.getUser(felix.username()));
     data.deleteUser("felix");
     assertNull(data.getUser(felix.username()));
+  }
+
+  @Test
+  public void addAuthTest(){
+    assertNull(data.getAuth(auth.authToken()));
+    data.addAuth(auth);
+    assertEquals(auth, data.getAuth(auth.authToken()));
+  }
+
+  @Test
+  public void deleteAuthTest(){
+    data.addAuth(auth);
+    assertEquals(auth, data.getAuth(auth.authToken()));
+    data.deleteAuth(auth.authToken());
+    assertNull(data.getAuth(auth.authToken()));
   }
 
 
