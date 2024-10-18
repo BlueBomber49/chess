@@ -1,3 +1,4 @@
+import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import model.*;
@@ -12,6 +13,7 @@ public class DataAccessTests {
   UserData bob;
   UserData felix;
   AuthData auth;
+  GameData game;
   @BeforeEach
   public void setup(){
     data = new MemoryDataAccess();
@@ -48,6 +50,15 @@ public class DataAccessTests {
     assertEquals(auth, data.getAuth(auth.authToken()));
     data.deleteAuth(auth.authToken());
     assertNull(data.getAuth(auth.authToken()));
+  }
+
+
+  @Test
+  public void createGameTest(){
+    assertNull(data.getGame(1));
+    int id = data.createGame("Bob's game");
+    GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
+    assertEquals(expected, data.getGame(id));
   }
 
 
