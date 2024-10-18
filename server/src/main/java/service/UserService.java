@@ -7,4 +7,10 @@ public class UserService {
   public UserService(DataAccess data){
     this.data = data;
   }
+
+  public void registerUser(){
+
+  }
+
+
 }

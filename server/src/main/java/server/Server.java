@@ -5,8 +5,6 @@ import dataaccess.*;
 import service.*;
 import spark.*;
 
-import javax.xml.crypto.Data;
-
 public class Server {
     private AdminService admin;
     private AuthService auth;
@@ -16,6 +14,7 @@ public class Server {
     private Gson serializer = new Gson();
 
     public Server(){
+        data = new MemoryDataAccess();
         this.admin = new AdminService(data);
         this.auth = new AuthService(data);
         this.game = new GameService(data);
