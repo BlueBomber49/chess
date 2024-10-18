@@ -61,5 +61,32 @@ public class DataAccessTests {
     assertEquals(expected, data.getGame(id));
   }
 
+  @Test
+  public void deleteGameTest(){
+    int id = data.createGame("Bob's game");
+    GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
+    assertEquals(expected, data.getGame(id));
+    data.deleteGame(id);
+    assertNull(data.getGame(id));
+  }
+
+  @Test
+  public void updateGameTest(){
+    int id = data.createGame("Bob's game");
+    GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
+    assertEquals(expected, data.getGame(id));
+    GameData updated = new GameData(1, "Bob", "Felix", "Bob's game", new ChessGame());
+    data.updateGame(updated);
+    assertEquals(updated, data.getGame(id));
+  }
+
+  @Test
+  public void getGameByNameTest(){
+    int id = data.createGame("Bob's game");
+    GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
+    assertEquals(expected, data.getGame(id));
+    assertEquals(data.getGame(id), data.getGame("Bob's game"));
+  }
+
 
 }
