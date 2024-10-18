@@ -17,6 +17,18 @@ public class MemoryDataAccess implements DataAccess {
     this.games = new HashMap<Integer, GameData>();
   }
 
+  /*public What gets returned? getAllUsers(){
+    return users;
+  }
+  */
+
+
+  public void clearAll(){
+    users.clear();
+    auth.clear();
+    games.clear();
+  }
+
   // UserData DAO
   public void addUser(UserData person){
      users.put(person.username(), person);

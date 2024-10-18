@@ -1,22 +1,25 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.*;
 import service.*;
 import spark.*;
+
+import javax.xml.crypto.Data;
 
 public class Server {
     private AdminService admin;
     private AuthService auth;
     private GameService game;
     private UserService user;
-
+    private DataAccess data;
     private Gson serializer = new Gson();
 
     public Server(){
-        this.admin = new AdminService();
-        this.auth = new AuthService();
-        this.game = new GameService();
-        this.user = new UserService();
+        this.admin = new AdminService(data);
+        this.auth = new AuthService(data);
+        this.game = new GameService(data);
+        this.user = new UserService(data);
     }
 
     public int run(int desiredPort) {
@@ -32,7 +35,6 @@ public class Server {
         Spark.get("/game", (req, res) -> "Returns list of games, requires authorization");
         Spark.post("/game", (req, res) -> "Creates a new game, requires authorization");
         Spark.put("/game", (req, res) -> "Joins game, requires authorization");
-        //This line initializes the server and can be removed once you have a functioning endpoint
 
         System.out.printf("Listening on port %d", desiredPort);
         return Spark.port();
