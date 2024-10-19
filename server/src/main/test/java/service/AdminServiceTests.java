@@ -1,3 +1,5 @@
+package service;
+
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import model.AuthData;

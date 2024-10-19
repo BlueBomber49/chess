@@ -1,3 +1,5 @@
+package data;
+
 import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;

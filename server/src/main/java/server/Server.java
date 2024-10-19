@@ -27,7 +27,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.delete("/db", (req, res) -> "Database go boom");
+        Spark.delete("/db", (req, res) -> clear());
         Spark.post("/users", (req, res) -> "Registers new user");
         Spark.post("/session", (req, res) -> "Logs in existing user, returning AuthToken");
         Spark.delete("/session", (req, res) -> "Logs out user, requires authorization");
@@ -44,6 +44,9 @@ public class Server {
         Spark.awaitStop();
     }
 
-
+    public Object clear(){
+        admin.clearAll();
+        return "successful deletion";
+    }
 
 }
