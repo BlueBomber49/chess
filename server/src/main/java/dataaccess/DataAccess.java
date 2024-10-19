@@ -2,6 +2,8 @@ package dataaccess;
 
 import model.*;
 
+import java.util.ArrayList;
+
 public interface DataAccess {
   public void addUser(UserData person);
   public UserData getUser(String username);
@@ -15,5 +17,6 @@ public interface DataAccess {
   public void updateGame(GameData game); //Send in the new game to replace the old one
   public GameData getGame(String gameName);
   public GameData getGame(int gameId);
+  public ArrayList<GameData> getAllGames();
   public void clearAll();
 }

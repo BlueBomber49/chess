@@ -28,11 +28,12 @@ public class AuthService {
   }
 
   public void logoutUser(String authToken) throws AuthFailedException {
-    AuthData auth = data.getAuth(authToken);
-    if(auth != null){
-      data.deleteAuth(authToken);
-    }
-    else{
+    verifyAuth(authToken);
+    data.deleteAuth(authToken);
+  }
+
+  public void verifyAuth(String authToken) throws AuthFailedException {
+    if(data.getAuth(authToken) == null){
       throw new AuthFailedException("Unauthorized");
     }
   }
