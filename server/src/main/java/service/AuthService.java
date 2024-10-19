@@ -27,8 +27,14 @@ public class AuthService {
     throw new AuthFailedException("Username or password incorrect");
   }
 
-  public void logoutUser(){
-
+  public void logoutUser(String authToken) throws AuthFailedException {
+    AuthData auth = data.getAuth(authToken);
+    if(auth != null){
+      data.deleteAuth(authToken);
+    }
+    else{
+      throw new AuthFailedException("Unauthorized");
+    }
   }
 
 }

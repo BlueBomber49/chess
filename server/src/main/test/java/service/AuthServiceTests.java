@@ -23,6 +23,7 @@ public class AuthServiceTests {
     felix = new UserData("felix", "icanfixit", "gonn@wreckit");
     auth = new AuthData("supahsecuretoken", "felix");
     data.addUser(bob);
+    data.addAuth(auth);
   }
 
   @Test
@@ -35,6 +36,19 @@ public class AuthServiceTests {
   public void loginSuccessfulTest() throws AuthFailedException{
     AuthData id = service.loginUser("bob", "canwefixit");
     assertEquals(id, data.getAuth(id.authToken()));
+  }
+
+  @Test
+  public void logoutFailTest() throws AuthFailedException{
+    assertThrows(AuthFailedException.class, () -> service.logoutUser("Not an access token"));
+    service.logoutUser(auth.authToken());
+    assertThrows(AuthFailedException.class, () -> service.logoutUser(auth.authToken()));
+  }
+
+  @Test
+  public void logoutSuccessfulTest() throws AuthFailedException{
+    service.logoutUser(auth.authToken());
+    assertNull(data.getAuth(auth.authToken()));
   }
 
 }
