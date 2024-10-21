@@ -22,21 +22,22 @@ public class Server {
     }
 
     public int run(int desiredPort) {
-        Spark.port(desiredPort);
+         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
         Spark.delete("/db", (req, res) -> clear());
-        Spark.post("/users", (req, res) -> "Registers new user");
+        Spark.post("/users", (req, res) -> "Registers user");
         Spark.post("/session", (req, res) -> "Logs in existing user, returning AuthToken");
         Spark.delete("/session", (req, res) -> "Logs out user, requires authorization");
         Spark.get("/game", (req, res) -> "Returns list of games, requires authorization");
         Spark.post("/game", (req, res) -> "Creates a new game, requires authorization");
         Spark.put("/game", (req, res) -> "Joins game, requires authorization");
 
-        System.out.printf("Listening on port %d", desiredPort);
-        return Spark.port();
+        int x = Spark.port();
+        System.out.printf("Listening on port %d", x);
+        return x;
     }
 
     public void stop() {
@@ -45,8 +46,13 @@ public class Server {
     }
 
     public Object clear(){
+        System.out.println("Hit the clear function");
         admin.clearAll();
-        return "successful deletion";
+        return serializer.toJson("Success");
+    }
+
+    public Object register(Request req){
+        return null;
     }
 
 }
