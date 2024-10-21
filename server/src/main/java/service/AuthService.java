@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataAccess;
 import model.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class AuthService {
@@ -15,7 +16,7 @@ public class AuthService {
   public AuthData loginUser(String username, String password) throws AuthFailedException {
     UserData user = data.getUser(username);
     if(user != null){
-      if(user.password() == password){
+      if(Objects.equals(user.password(), password)){
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString();
         AuthData auth = new AuthData(id, username);

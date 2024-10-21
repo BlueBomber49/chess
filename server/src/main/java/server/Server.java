@@ -2,8 +2,13 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import model.*;
 import service.*;
+import service.requestClasses.LoginRequest;
+import service.responseClasses.FailureMessageResponse;
 import spark.*;
+
+import java.util.ArrayList;
 
 public class Server {
     private AdminService admin;
@@ -27,17 +32,20 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
-        Spark.delete("/db", (req, res) -> clear());
-        Spark.post("/users", (req, res) -> "Registers user");
-        Spark.post("/session", (req, res) -> "Logs in existing user, returning AuthToken");
+        Spark.delete("/db", this::clear);
+        Spark.post("/user", this::register);
+        Spark.post("/session", this::login);
         Spark.delete("/session", (req, res) -> "Logs out user, requires authorization");
         Spark.get("/game", (req, res) -> "Returns list of games, requires authorization");
         Spark.post("/game", (req, res) -> "Creates a new game, requires authorization");
         Spark.put("/game", (req, res) -> "Joins game, requires authorization");
 
-        int x = Spark.port();
-        System.out.printf("Listening on port %d", x);
-        return x;
+
+        Spark.awaitInitialization();
+
+        System.out.printf("Listening on port %d", desiredPort);
+
+        return Spark.port();
     }
 
     public void stop() {
@@ -45,14 +53,34 @@ public class Server {
         Spark.awaitStop();
     }
 
-    public Object clear(){
-        System.out.println("Hit the clear function");
+    public Object clear(Request req, Response res){
         admin.clearAll();
-        return serializer.toJson("Success");
+        res.status(200);
+        return "";
     }
 
-    public Object register(Request req){
-        return null;
+    public Object register(Request req, Response res) throws BadInputException {
+        var person = serializer.fromJson(req.body(), UserData.class);
+        user.registerUser(person);
+        res.status(200);
+        return "";
+    }
+
+    public Object login(Request req, Response res) throws AuthFailedException {
+        var body = serializer.fromJson(req.body(), LoginRequest.class);
+        var username = body.username();
+        var password = body.password();
+        AuthData token;
+        try {
+            token = auth.loginUser(username, password);
+            res.status(200);
+            return serializer.toJson(token);
+        }
+        catch (AuthFailedException e){
+            res.status(401);
+            var message = new FailureMessageResponse("Unauthorized");
+            return serializer.toJson(message, FailureMessageResponse.class);
+        }
     }
 
 }
