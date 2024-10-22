@@ -6,6 +6,8 @@ import model.*;
 import service.*;
 import service.requestClasses.LoginRequest;
 import service.responseClasses.FailureMessageResponse;
+import service.responseClasses.GameListResponse;
+import service.responseClasses.GameResponse;
 import spark.*;
 
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class Server {
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
-        Spark.get("/game", (req, res) -> "Returns list of games, requires authorization");
+        Spark.get("/game", this::listGames);
         Spark.post("/game", (req, res) -> "Creates a new game, requires authorization");
         Spark.put("/game", (req, res) -> "Joins game, requires authorization");
 
@@ -109,6 +111,25 @@ public class Server {
             return serializer.toJson(new FailureMessageResponse(message));
         }
         return "";
+    }
+
+    public Object listGames(Request req, Response res) throws AuthFailedException {
+        var token = req.headers("Authorization");
+        String message = "";
+        try {
+            ArrayList<model.GameData> listGames=game.listGames(token);
+            ArrayList<GameResponse> list=new ArrayList<>();
+            for (GameData gameData : listGames) {
+                GameResponse newGame=new GameResponse(gameData.gameId(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName());
+                list.add(newGame);
+            }
+            GameListResponse listResponse=new GameListResponse(list);
+            return serializer.toJson(listResponse);
+        }
+        catch(AuthFailedException e){
+            message = "Error: Unauthorized";
+            return serializer.toJson(new FailureMessageResponse(message));
+        }
     }
 
 }
