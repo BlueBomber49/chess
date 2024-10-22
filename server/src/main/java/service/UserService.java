@@ -11,7 +11,7 @@ public class UserService {
     this.data = data;
   }
 
-  public AuthData registerUser(UserData user) throws BadInputException {
+  public AuthData registerUser(UserData user) throws BadInputException, UsernameTakenException {
     if (user.password() != "" && user.username() != "" && user.email() != "") {
       if (data.getUser(user.username()) == null) {
         data.addUser(user);
@@ -21,7 +21,7 @@ public class UserService {
         data.addAuth(auth);
         return auth;
       } else {
-        throw new BadInputException("Username already taken");
+        throw new UsernameTakenException("Username already taken");
       }
     }
     else{

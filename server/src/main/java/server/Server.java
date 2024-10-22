@@ -42,8 +42,8 @@ public class Server {
 
 
         Spark.awaitInitialization();
-
-        System.out.printf("Listening on port %d", desiredPort);
+        desiredPort = Spark.port();
+        System.out.printf("Listening on port %d%n", desiredPort);
 
         return Spark.port();
     }
@@ -59,11 +59,25 @@ public class Server {
         return "";
     }
 
-    public Object register(Request req, Response res) throws BadInputException {
+    public Object register(Request req, Response res){
         var person = serializer.fromJson(req.body(), UserData.class);
-        user.registerUser(person);
-        res.status(200);
-        return "";
+        AuthData token;
+        String message;
+        try {
+            token = user.registerUser(person);
+            res.status(200);
+            return serializer.toJson(token);
+        }
+        catch (BadInputException e){
+            res.status(400);
+            message = "Error: Bad Request";
+        }
+        catch (UsernameTakenException e) {
+            res.status(403);
+            message = "Error: Username already taken";
+        }
+            return serializer.toJson(new FailureMessageResponse(message));
+
     }
 
     public Object login(Request req, Response res) throws AuthFailedException {
@@ -79,7 +93,7 @@ public class Server {
         catch (AuthFailedException e){
             res.status(401);
             var message = new FailureMessageResponse("Unauthorized");
-            return serializer.toJson(message, FailureMessageResponse.class);
+            return serializer.toJson(message);
         }
     }
 

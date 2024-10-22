@@ -25,14 +25,14 @@ public class UserServiceTests {
   }
 
   @Test
-  public void registerFailureTest() throws BadInputException {
+  public void registerFailureTest() throws BadInputException, UsernameTakenException {
     assertThrows(BadInputException.class, () -> service.registerUser(bob));
     service.registerUser(felix);
     assertThrows(BadInputException.class, () -> service.registerUser(felix));
   }
 
   @Test
-  public void registerSuccessfulTest() throws BadInputException{
+  public void registerSuccessfulTest() throws BadInputException, UsernameTakenException {
     AuthData id = service.registerUser(felix);
     assertEquals(felix, data.getUser(felix.username()));
     assertEquals(id, data.getAuth(id.authToken()));
