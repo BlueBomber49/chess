@@ -12,7 +12,7 @@ public class UserService {
   }
 
   public AuthData registerUser(UserData user) throws BadInputException, UsernameTakenException {
-    if (user.password() != "" && user.username() != "" && user.email() != "") {
+    if (user.password() != null && user.username() != null && user.email() != null) {
       if (data.getUser(user.username()) == null) {
         data.addUser(user);
         UUID uuid=UUID.randomUUID();

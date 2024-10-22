@@ -92,7 +92,7 @@ public class Server {
         }
         catch (AuthFailedException e){
             res.status(401);
-            var message = new FailureMessageResponse("Unauthorized");
+            var message = new FailureMessageResponse("Error: Unauthorized");
             return serializer.toJson(message);
         }
     }
