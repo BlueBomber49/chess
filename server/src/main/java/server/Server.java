@@ -35,7 +35,7 @@ public class Server {
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
-        Spark.delete("/session", (req, res) -> "Logs out user, requires authorization");
+        Spark.delete("/session", this::logout);
         Spark.get("/game", (req, res) -> "Returns list of games, requires authorization");
         Spark.post("/game", (req, res) -> "Creates a new game, requires authorization");
         Spark.put("/game", (req, res) -> "Joins game, requires authorization");
@@ -95,6 +95,20 @@ public class Server {
             var message = new FailureMessageResponse("Error: Unauthorized");
             return serializer.toJson(message);
         }
+    }
+
+    public Object logout(Request req, Response res) {
+        var token = req.headers("Authorization");
+        String message = "";
+        try {
+            auth.logoutUser(token);
+        }
+        catch (AuthFailedException e){
+            res.status(401);
+            message = "Error: Unauthorized";
+            return serializer.toJson(new FailureMessageResponse(message));
+        }
+        return "";
     }
 
 }
