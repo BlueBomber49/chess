@@ -4,8 +4,10 @@ import com.google.gson.Gson;
 import dataaccess.*;
 import model.*;
 import service.*;
+import service.requestClasses.CreateGameRequest;
 import service.requestClasses.LoginRequest;
 import service.responseClasses.FailureMessageResponse;
+import service.responseClasses.GameIdResponse;
 import service.responseClasses.GameListResponse;
 import service.responseClasses.GameResponse;
 import spark.*;
@@ -39,8 +41,8 @@ public class Server {
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.get("/game", this::listGames);
-        Spark.post("/game", (req, res) -> "Creates a new game, requires authorization");
-        Spark.put("/game", (req, res) -> "Joins game, requires authorization");
+        Spark.post("/game", this::createGame);
+        Spark.put("/game", this::joinGame);
 
 
         Spark.awaitInitialization();
@@ -115,7 +117,7 @@ public class Server {
 
     public Object listGames(Request req, Response res) throws AuthFailedException {
         var token = req.headers("Authorization");
-        String message = "";
+        String message;
         try {
             ArrayList<model.GameData> listGames=game.listGames(token);
             ArrayList<GameResponse> list=new ArrayList<>();
@@ -132,4 +134,25 @@ public class Server {
         }
     }
 
+    public Object createGame(Request req, Response res) throws AuthFailedException{
+        var token = req.headers("Authorization");
+        var name = serializer.fromJson(req.body(), CreateGameRequest.class);
+        String message;
+        try {
+            int gameId = game.createGame(token, name.gameName());
+            var x = serializer.toJson(new GameIdResponse(gameId));
+            return serializer.toJson(new GameIdResponse(gameId));
+        }
+        catch (AuthFailedException e){
+            message = "Error: Unauthorized";
+            res.status(401);
+            return serializer.toJson(new FailureMessageResponse(message));
+        }
+    }
+
+    public Object joinGame(Request req, Response res) throws AuthFailedException{
+        var token = req.headers("Authorization");
+
+        return null;
+    }
 }
