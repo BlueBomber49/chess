@@ -31,6 +31,7 @@ public class GameServiceTests {
     auth = new AuthData("supahsecuretoken", "bob");
     auth2 = new AuthData("token", "felix");
     data.addAuth(auth);
+    data.addAuth(auth2);
     data.createGame("Bob's game");
     data.createGame("Felix's game");
   }

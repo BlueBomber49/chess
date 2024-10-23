@@ -26,9 +26,10 @@ public class UserServiceTests {
 
   @Test
   public void registerFailureTest() throws BadInputException, UsernameTakenException {
+    bob = new UserData("bob", null, "");
     assertThrows(BadInputException.class, () -> service.registerUser(bob));
     service.registerUser(felix);
-    assertThrows(BadInputException.class, () -> service.registerUser(felix));
+    assertThrows(UsernameTakenException.class, () -> service.registerUser(felix));
   }
 
   @Test
