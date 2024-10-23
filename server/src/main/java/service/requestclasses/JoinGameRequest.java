@@ -1,4 +1,4 @@
-package service.requestClasses;
+package service.requestclasses;
 
 import chess.ChessGame;
 

@@ -1,9 +1,8 @@
-package chess.MoveCalculators;
+package chess.movecalculators;
 
 import chess.*;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class KnightMoveCalculator extends MoveCalculator{
 
@@ -18,7 +17,7 @@ public class KnightMoveCalculator extends MoveCalculator{
     super(board, pieceType, color, position);
   }
 
-  public ArrayList<ChessMove> CalculateValidMoves(){
+  public ArrayList<ChessMove> calculateValidMoves(){
 
     ChessPosition start = super.position;
     ChessPosition end = start;

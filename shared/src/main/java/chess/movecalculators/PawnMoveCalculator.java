@@ -1,4 +1,4 @@
-package chess.MoveCalculators;
+package chess.movecalculators;
 
 import chess.*;
 
@@ -15,7 +15,7 @@ public class PawnMoveCalculator extends MoveCalculator{
     super(board, pieceType, color, position);
   }
 
-  public ArrayList<ChessMove> CalculateValidMoves(){
+  public ArrayList<ChessMove> calculateValidMoves(){
     ChessPosition start = super.position;
     ChessPosition end = start;
     ChessGame.TeamColor color = super.color;
