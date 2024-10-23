@@ -24,7 +24,8 @@ public class GameService {
     return data.createGame(gameName);
   }
 
-  public void joinGame(String authToken, Integer gameID, ChessGame.TeamColor color) throws AuthFailedException, BadInputException, ColorTakenException {
+  public void joinGame(String authToken, Integer gameID, ChessGame.TeamColor color)
+          throws AuthFailedException, BadInputException, ColorTakenException {
     String userName = verifyAuth(authToken);
     if(gameID != null) {
       GameData game=data.getGame(gameID);

@@ -46,15 +46,22 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "ChessMove{" + "[" + startPosition.getRow() + "," + startPosition.getColumn() + "], " + "[" + endPosition.getRow() + ", " + endPosition.getColumn() + "]}";
+            String s = "ChessMove{" + "[" + startPosition.getRow() + "," + startPosition.getColumn() + "], ";
+            s += "[" + endPosition.getRow() + ", " + endPosition.getColumn() + "]}";
+        return s;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessMove chessMove=(ChessMove) o;
-        return Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition) && promotionPiece == chessMove.promotionPiece;
+        boolean equalPos = Objects.equals(startPosition, chessMove.startPosition) && Objects.equals(endPosition, chessMove.endPosition);
+        return promotionPiece == chessMove.promotionPiece && equalPos;
     }
 
     @Override

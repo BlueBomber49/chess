@@ -17,11 +17,6 @@ public class MemoryDataAccess implements DataAccess {
     this.games = new HashMap<Integer, GameData>();
   }
 
-  /*public What gets returned? getAllUsers(){
-    return users;
-  }
-  */
-
 
   public void clearAll(){
     users.clear();
