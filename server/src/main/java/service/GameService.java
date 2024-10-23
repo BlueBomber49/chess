@@ -24,32 +24,39 @@ public class GameService {
     return data.createGame(gameName);
   }
 
-  public void joinGame(String authToken, Integer gameID, String userName, ChessGame.TeamColor color) throws AuthFailedException, BadInputException {
-    verifyAuth(authToken);
-    GameData game = data.getGame(gameID);
-    GameData newGame;
-    if(game != null){
-      if(color == ChessGame.TeamColor.WHITE){
-        if(game.whiteUsername() != null){
-          throw new BadInputException("White already taken");
+  public void joinGame(String authToken, Integer gameID, ChessGame.TeamColor color) throws AuthFailedException, BadInputException, ColorTakenException {
+    String userName = verifyAuth(authToken);
+    if(gameID != null) {
+      GameData game=data.getGame(gameID);
+      GameData newGame;
+      if (game != null) {
+        if (color == ChessGame.TeamColor.WHITE) {
+          if (game.whiteUsername() != null) {
+            throw new ColorTakenException("Error: White already taken");
+          }
+          newGame=new GameData(game.gameId(), userName, game.blackUsername(), game.gameName(), game.game());
+        } else if (color == ChessGame.TeamColor.BLACK) {
+          if (game.blackUsername() != null) {
+            throw new ColorTakenException("Error: Black already taken");
+          }
+          newGame=new GameData(game.gameId(), game.whiteUsername(), userName, game.gameName(), game.game());
+        } else {
+          throw new BadInputException("Error: Invalid Color");
         }
-        newGame = new GameData(game.gameId(), userName, game.blackUsername(), game.gameName(), game.game());
+      } else {
+        throw new BadInputException("Error: Invalid GameID");
       }
-      else{
-        if(game.blackUsername() != null){
-          throw new BadInputException("Black already taken");
-        }
-        newGame = new GameData(game.gameId(), game.whiteUsername(), userName, game.gameName(), game.game());
-      }
-    } else{
-      throw new BadInputException("Invalid GameID");
+      data.updateGame(newGame);
     }
-    data.updateGame(newGame);
+    else{
+      throw new BadInputException("Error: GameID is null");
+    }
   }
 
-  public void verifyAuth(String authToken) throws AuthFailedException {
+  public String verifyAuth(String authToken) throws AuthFailedException {
     if(data.getAuth(authToken) == null){
-      throw new AuthFailedException("Unauthorized");
+      throw new AuthFailedException("Error: Unauthorized");
     }
+    return data.getAuth(authToken).username();
   }
 }

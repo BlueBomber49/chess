@@ -5,6 +5,7 @@ import dataaccess.*;
 import model.*;
 import service.*;
 import service.requestClasses.CreateGameRequest;
+import service.requestClasses.JoinGameRequest;
 import service.requestClasses.LoginRequest;
 import service.responseClasses.FailureMessageResponse;
 import service.responseClasses.GameIdResponse;
@@ -115,14 +116,14 @@ public class Server {
         return "";
     }
 
-    public Object listGames(Request req, Response res) throws AuthFailedException {
+    public Object listGames(Request req, Response res){
         var token = req.headers("Authorization");
         String message;
         try {
-            ArrayList<model.GameData> listGames=game.listGames(token);
+            ArrayList<model.GameData> listGames = game.listGames(token);
             ArrayList<GameResponse> list=new ArrayList<>();
             for (GameData gameData : listGames) {
-                GameResponse newGame=new GameResponse(gameData.gameId(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName());
+                GameResponse newGame = new GameResponse(gameData.gameId(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName());
                 list.add(newGame);
             }
             GameListResponse listResponse=new GameListResponse(list);
@@ -130,6 +131,7 @@ public class Server {
         }
         catch(AuthFailedException e){
             message = "Error: Unauthorized";
+            res.status(401);
             return serializer.toJson(new FailureMessageResponse(message));
         }
     }
@@ -152,7 +154,22 @@ public class Server {
 
     public Object joinGame(Request req, Response res) throws AuthFailedException{
         var token = req.headers("Authorization");
-
-        return null;
+        var joinRequest = serializer.fromJson(req.body(), JoinGameRequest.class);
+        try {
+            game.joinGame(token, joinRequest.gameID(), joinRequest.playerColor());
+        }
+        catch (AuthFailedException e){
+            res.status(401);
+            return serializer.toJson(new FailureMessageResponse(e.getMessage()));
+        }
+        catch (BadInputException e) {
+            res.status(400);
+            return serializer.toJson(new FailureMessageResponse(e.getMessage()));
+        }
+        catch (ColorTakenException e){
+            res.status(403);
+            return serializer.toJson(new FailureMessageResponse(e.getMessage()));
+        }
+      return "";
     }
 }

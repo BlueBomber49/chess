@@ -18,6 +18,7 @@ public class GameServiceTests {
   UserData bob;
   UserData felix;
   AuthData auth;
+  AuthData auth2;
   GameService service;
   @BeforeEach
   public void setup(){
@@ -28,6 +29,7 @@ public class GameServiceTests {
     data.addUser(bob);
     data.addUser(felix);
     auth = new AuthData("supahsecuretoken", "bob");
+    auth2 = new AuthData("token", "felix");
     data.addAuth(auth);
     data.createGame("Bob's game");
     data.createGame("Felix's game");
@@ -65,21 +67,21 @@ public class GameServiceTests {
   }
 
   @Test
-  public void successfulJoinGame() throws AuthFailedException, BadInputException {
-    service.joinGame("supahsecuretoken", 1, "Bob", ChessGame.TeamColor.WHITE);
-    GameData game1 = new GameData(1, "Bob", null, "Bob's game", new ChessGame());
+  public void successfulJoinGame() throws AuthFailedException, BadInputException, ColorTakenException {
+    service.joinGame("supahsecuretoken", 1, ChessGame.TeamColor.WHITE);
+    GameData game1 = new GameData(1, "bob", null, "Bob's game", new ChessGame());
     assertEquals(game1, data.getGame("Bob's game"));
-    service.joinGame("supahsecuretoken", 1, "Felix", ChessGame.TeamColor.BLACK);
-    game1 = new GameData(1, "Bob", "Felix", "Bob's game", new ChessGame());
+    service.joinGame("token", 1, ChessGame.TeamColor.BLACK);
+    game1 = new GameData(1, "bob", "felix", "Bob's game", new ChessGame());
     assertEquals(game1, data.getGame("Bob's game"));
   }
 
   @Test
-  public void failedJoinGame() throws AuthFailedException, BadInputException {
-    service.joinGame("supahsecuretoken", 1, "Bob", ChessGame.TeamColor.WHITE);
-    assertThrows(BadInputException.class, () -> service.joinGame("supahsecuretoken", 1, "Other Bob", ChessGame.TeamColor.WHITE));
-    assertThrows(AuthFailedException.class, () -> service.joinGame("bad token", 1, "Gene", ChessGame.TeamColor.WHITE));
-    assertThrows(BadInputException.class, () -> service.joinGame("supahsecuretoken", 77, "hacker", ChessGame.TeamColor.WHITE));
+  public void failedJoinGame() throws AuthFailedException, BadInputException, ColorTakenException {
+    service.joinGame("supahsecuretoken", 1, ChessGame.TeamColor.WHITE);
+    assertThrows(ColorTakenException.class, () -> service.joinGame("supahsecuretoken", 1, ChessGame.TeamColor.WHITE));
+    assertThrows(AuthFailedException.class, () -> service.joinGame("bad token", 1, ChessGame.TeamColor.BLACK));
+    assertThrows(BadInputException.class, () -> service.joinGame("supahsecuretoken", 77, ChessGame.TeamColor.BLACK));
   }
 
 
