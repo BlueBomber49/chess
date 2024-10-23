@@ -65,9 +65,9 @@ public class ChessGame {
         if(piece == null){
             return null;
         }
-        Collection<ChessMove> ChessMoves = piece.pieceMoves(gameBoard, startPosition);
+        Collection<ChessMove> chessMoves = piece.pieceMoves(gameBoard, startPosition);
         TeamColor team = piece.getTeamColor();
-        for(ChessMove testMove : ChessMoves){
+        for(ChessMove testMove : chessMoves){
             try {
                 ChessPiece capturedPiece = gameBoard.getPiece(testMove.getEndPosition());
                 gameBoard.movePiece(testMove); //Setting the theoretical board up

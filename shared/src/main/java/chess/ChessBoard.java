@@ -87,12 +87,12 @@ public class ChessBoard {
      */
     public void resetBoard() {
         squares = new ChessPiece[8][8];
-        ChessPiece K = new ChessPiece(ChessGame.TeamColor.WHITE, KING);
-        ChessPiece Q = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
-        ChessPiece B = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
-        ChessPiece N = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
-        ChessPiece R = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        ChessPiece P = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+        ChessPiece wK = new ChessPiece(ChessGame.TeamColor.WHITE, KING);
+        ChessPiece wQ = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        ChessPiece wB = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        ChessPiece wN = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        ChessPiece wR = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        ChessPiece wP = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
 
         ChessPiece k = new ChessPiece(ChessGame.TeamColor.BLACK, KING);
         ChessPiece q = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
@@ -101,7 +101,7 @@ public class ChessBoard {
         ChessPiece r = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
         ChessPiece p = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
 
-        ChessPiece [] whiteBackRow = new ChessPiece[]{R, N, B, Q, K, B, N, R};
+        ChessPiece [] whiteBackRow = new ChessPiece[]{wR, wN, wB, wQ, wK, wB, wN, wR};
         ChessPiece [] blackBackRow = new ChessPiece[]{r, n, b, q, k, b, n, r};
 
         for(int i = 0; i < squares.length; i++){
@@ -109,7 +109,7 @@ public class ChessBoard {
         }
 
         for(int i = 0; i < squares.length; i++){
-            squares[1][i] = P;
+            squares[1][i] = wP;
         }
 
         for(int i = 0; i < squares.length; i++){

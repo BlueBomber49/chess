@@ -22,7 +22,7 @@ public class MoveCalculator {
       this.position = position;
   }
 
-  public ArrayList<ChessMove> GetMoves(){
+  public ArrayList<ChessMove> getMoves(){
     if(pieceType == ChessPiece.PieceType.KING){
       KingMoveCalculator calc = new KingMoveCalculator(board, pieceType, color, position);
       validMoves = calc.calculateValidMoves();

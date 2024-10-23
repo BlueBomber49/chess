@@ -25,14 +25,14 @@ public class KingMoveCalculator extends MoveCalculator {
      * Checks to see if you're moving onto a friendly piece
      * Or if your starting and ending positions are equal (Not a move)
      */
-    for(int row_diff = -1; row_diff < 2; row_diff++){
-      for(int col_diff = -1; col_diff < 2; col_diff++){
-        int endRow = start.getRow() + row_diff;
-        int endCol = start.getColumn() + col_diff;
+    for(int rowDiff = -1; rowDiff < 2; rowDiff++){
+      for(int colDiff = -1; colDiff < 2; colDiff++){
+        int endRow = start.getRow() + rowDiff;
+        int endCol = start.getColumn() + colDiff;
         if(endRow < 1 || endRow > 8 || endCol < 1 || endCol> 8) {
           continue;
         }
-        end = new ChessPosition(start.getRow() + row_diff, start.getColumn() + col_diff);
+        end = new ChessPosition(start.getRow() + rowDiff, start.getColumn() + colDiff);
         if(end == start){
           continue;
         }

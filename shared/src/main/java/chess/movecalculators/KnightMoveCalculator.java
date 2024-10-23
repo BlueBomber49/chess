@@ -24,13 +24,13 @@ public class KnightMoveCalculator extends MoveCalculator{
     ChessGame.TeamColor color = super.color;
     ArrayList<ChessMove> moveList = new ArrayList<>();
 
-    Integer[] RowModifiers = new Integer[]{2, 2, -2, -2, 1, -1, 1, -1};
-    Integer[] ColumnModifiers = new Integer[]{1, -1, 1, -1, 2, 2, -2, -2};
+    Integer[] rowModifiers = new Integer[]{2, 2, -2, -2, 1, -1, 1, -1};
+    Integer[] columnModifiers = new Integer[]{1, -1, 1, -1, 2, 2, -2, -2};
 
 
-    for(int i = 0; i < RowModifiers.length; i++){
-      int endRow = start.getRow() + RowModifiers[i];
-      int endCol = start.getColumn() + ColumnModifiers[i];
+    for(int i = 0; i < rowModifiers.length; i++){
+      int endRow = start.getRow() + rowModifiers[i];
+      int endCol = start.getColumn() + columnModifiers[i];
       if(1 <= endRow && 8 >= endRow && 1 <= endCol && 8 >= endCol){
         end = new ChessPosition(endRow, endCol);
         if(board.getPiece(end) == null || board.getPiece(end).getTeamColor() != color){  //Empty end space

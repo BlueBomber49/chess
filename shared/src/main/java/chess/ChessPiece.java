@@ -58,7 +58,7 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         MoveCalculator calc = new MoveCalculator(board, type, pieceColor, myPosition);
-        ArrayList<ChessMove> validMoves = calc.GetMoves();
+        ArrayList<ChessMove> validMoves = calc.getMoves();
         return validMoves;
     }
 
