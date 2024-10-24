@@ -28,6 +28,7 @@ public class PawnMoveCalculator extends MoveCalculator{
       //If row = 7, valid moves = all promotion pieces
 
       //Edge cases
+
       if(start.getRow() == 2){ //Double move option
         end = new ChessPosition(start.getRow() + 2, start.getColumn());
         if(board.getPiece(end) == null && board.getPiece(new ChessPosition(start.getRow()+1, start.getColumn())) == null) {
