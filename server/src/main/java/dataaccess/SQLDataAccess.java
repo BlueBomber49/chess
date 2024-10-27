@@ -12,10 +12,12 @@ public class SQLDataAccess implements DataAccess{
     configureDatabase();
   }
   Connection getConnection() throws SQLException {
-    return DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "SQLPassword");
+    var conn = DriverManager.getConnection("jdbc:mysql://localhost:3306", "root", "SQLPassword");
+    conn.setCatalog("chess");
+    return conn;
   }
 
-  Connection configureDatabase() throws SQLException {
+  void configureDatabase() throws SQLException {
     try (var conn = getConnection()){
       var createDBStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS chess");
       createDBStatement.executeUpdate();
@@ -54,12 +56,10 @@ public class SQLDataAccess implements DataAccess{
       preparedStatement3.executeUpdate();
       preparedStatement3.close();
       System.out.println("Successful initialization of database");
-      return conn;
     }
     catch (SQLException e){
       System.out.println("Failed to connect to database: " + e);
     }
-    return null;
   }
 
   @Override
@@ -68,7 +68,7 @@ public class SQLDataAccess implements DataAccess{
       var username=person.username();
       var password=person.password();
       var email=person.email();
-      var preparedStatement=conn.prepareStatement("INSERT INTO user (username, password, email) VALUES(?,?,?)");
+      var preparedStatement=conn.prepareStatement("INSERT INTO users (username, password, email) VALUES(?,?,?)");
         preparedStatement.setString(1, username);
         preparedStatement.setString(2, password);
         preparedStatement.setString(3, email);
@@ -84,8 +84,11 @@ public class SQLDataAccess implements DataAccess{
   @Override
   public UserData getUser(String username){
     try(var conn = getConnection()) {
-      var preparedStatement=conn.prepareStatement(""); {
-        preparedStatement.executeUpdate();
+      var prepped = conn.prepareStatement("SELECT * FROM users WHERE username = ?;");
+      prepped.setString(1, username);
+      var result = prepped.executeQuery();
+      if(result.next()){
+        return new UserData(result.getString("username"), result.getString("password"), result.getString("email"));
       }
     }
     catch (SQLException e) {
