@@ -77,6 +77,7 @@ public class SQLDataAccess implements DataAccess{
     }
       catch (SQLException e) {
         System.out.println(e);
+        //Add other handling
       }
 
   }
@@ -93,13 +94,22 @@ public class SQLDataAccess implements DataAccess{
     }
     catch (SQLException e) {
         System.out.println(e);
+        //Add other handling
     }
     return null;
   }
 
   @Override
   public void deleteUser(String username) {
-
+    try(var conn = getConnection()) {
+      var prepped=conn.prepareStatement("DELETE FROM users WHERE username = ?;");
+      prepped.setString(1, username);
+      prepped.executeUpdate();
+    }
+    catch (SQLException e) {
+      System.out.println(e);
+      //Add other handling
+    }
   }
 
   @Override
