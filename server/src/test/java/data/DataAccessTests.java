@@ -4,6 +4,7 @@ import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
 import dataaccess.SQLDataAccess;
+import dataaccess.exception.ResponseException;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,7 @@ public class DataAccessTests {
   AuthData auth;
   GameData game;
   @BeforeEach
-  public void setup(){
+  public void setup() throws ResponseException {
     data = new SQLDataAccess();
     data.clearAll();
     bob = new UserData("bob", "canwefixit", "yes@wecan");
@@ -29,7 +30,7 @@ public class DataAccessTests {
   }
 
   @Test
-  public void goodAddUserTest(){
+  public void goodAddUserTest() throws ResponseException {
     assertNull(data.getUser(bob.username()));
     data.addUser(bob);
     assertEquals(bob, data.getUser(bob.username()));
@@ -42,7 +43,7 @@ public class DataAccessTests {
   }
 
   @Test
-  public void deleteUserTest(){
+  public void deleteUserTest() throws ResponseException {
     data.addUser(felix);
     assertEquals(felix, data.getUser(felix.username()));
     data.deleteUser("felix");
@@ -50,14 +51,14 @@ public class DataAccessTests {
   }
 
   @Test
-  public void addAuthTest(){
+  public void addAuthTest() throws ResponseException {
     assertNull(data.getAuth(auth.authToken()));
     data.addAuth(auth);
     assertEquals(auth, data.getAuth(auth.authToken()));
   }
 
   @Test
-  public void deleteAuthTest(){
+  public void deleteAuthTest() throws ResponseException {
     data.addAuth(auth);
     assertEquals(auth, data.getAuth(auth.authToken()));
     data.deleteAuth(auth.authToken());

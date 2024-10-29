@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.DataAccess;
+import dataaccess.exception.ResponseException;
 import model.*;
 import service.exception.AuthFailedException;
 
@@ -14,7 +15,7 @@ public class AuthService {
 
   }
 
-  public AuthData loginUser(String username, String password) throws AuthFailedException {
+  public AuthData loginUser(String username, String password) throws AuthFailedException, ResponseException {
     UserData user = data.getUser(username);
     if(user != null){
       if(Objects.equals(user.password(), password)){
@@ -29,12 +30,12 @@ public class AuthService {
     throw new AuthFailedException("Username or password incorrect");
   }
 
-  public void logoutUser(String authToken) throws AuthFailedException {
+  public void logoutUser(String authToken) throws AuthFailedException, ResponseException {
     verifyAuth(authToken);
     data.deleteAuth(authToken);
   }
 
-  public void verifyAuth(String authToken) throws AuthFailedException {
+  public void verifyAuth(String authToken) throws AuthFailedException, ResponseException {
     if(data.getAuth(authToken) == null){
       throw new AuthFailedException("Unauthorized");
     }

@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.DataAccess;
+import dataaccess.exception.ResponseException;
 import model.*;
 import service.exception.BadInputException;
 import service.exception.UsernameTakenException;
@@ -13,7 +14,7 @@ public class UserService {
     this.data = data;
   }
 
-  public AuthData registerUser(UserData user) throws BadInputException, UsernameTakenException {
+  public AuthData registerUser(UserData user) throws BadInputException, UsernameTakenException, ResponseException {
     if (user.password() != null && user.username() != null && user.email() != null) {
       if (data.getUser(user.username()) == null) {
         data.addUser(user);

@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
+import dataaccess.exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ public class UserServiceTests {
   }
 
   @Test
-  public void registerFailureTest() throws BadInputException, UsernameTakenException {
+  public void registerFailureTest() throws BadInputException, UsernameTakenException, ResponseException {
     bob = new UserData("bob", null, "");
     assertThrows(BadInputException.class, () -> service.registerUser(bob));
     service.registerUser(felix);
@@ -35,7 +36,7 @@ public class UserServiceTests {
   }
 
   @Test
-  public void registerSuccessfulTest() throws BadInputException, UsernameTakenException {
+  public void registerSuccessfulTest() throws BadInputException, UsernameTakenException, ResponseException {
     AuthData id = service.registerUser(felix);
     assertEquals(felix, data.getUser(felix.username()));
     assertEquals(id, data.getAuth(id.authToken()));

@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
+import dataaccess.exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,7 +17,7 @@ public class AdminServiceTests {
   UserData felix;
   AuthData auth;
   @BeforeEach
-  public void setup(){
+  public void setup() throws ResponseException {
     data = new MemoryDataAccess();
     admin = new AdminService(data);
     bob = new UserData("bob", "canwefixit", "yes@wecan");
@@ -29,7 +30,7 @@ public class AdminServiceTests {
   }
 
   @Test
-  public void clearTest(){
+  public void clearTest() throws ResponseException {
     data.clearAll();
     assertNull(data.getGame("Bob's game"));
     assertNull(data.getAuth("supahsecuretoken"));

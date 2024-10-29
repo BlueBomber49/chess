@@ -2,6 +2,7 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import dataaccess.exception.ResponseException;
 import model.*;
 import service.*;
 import service.exception.AuthFailedException;
@@ -63,9 +64,15 @@ public class Server {
     }
 
     public Object clear(Request req, Response res){
-        admin.clearAll();
-        res.status(200);
-        return "";
+        try {
+            admin.clearAll();
+            res.status(200);
+            return "";
+        }
+        catch (ResponseException e) {
+            res.status(e.errorCode());
+            return serializer.toJson(new FailureMessageResponse(e.getMessage()));
+        }
     }
 
     public Object register(Request req, Response res){
@@ -84,6 +91,10 @@ public class Server {
         catch (UsernameTakenException e) {
             res.status(403);
             message = "Error: Username already taken";
+        }
+        catch (ResponseException e) {
+            res.status(e.errorCode());
+            message = e.getMessage();
         }
             return serializer.toJson(new FailureMessageResponse(message));
 
@@ -104,6 +115,10 @@ public class Server {
             var message = new FailureMessageResponse("Error: Unauthorized");
             return serializer.toJson(message);
         }
+        catch (ResponseException e) {
+            res.status(e.errorCode());
+            return serializer.toJson(e.getMessage());
+        }
     }
 
     public Object logout(Request req, Response res) {
@@ -116,6 +131,10 @@ public class Server {
             res.status(401);
             message = "Error: Unauthorized";
             return serializer.toJson(new FailureMessageResponse(message));
+        }
+        catch (ResponseException e) {
+            res.status(e.errorCode());
+            return serializer.toJson(new FailureMessageResponse(e.getMessage()));
         }
         return "";
     }
@@ -138,6 +157,11 @@ public class Server {
             res.status(401);
             return serializer.toJson(new FailureMessageResponse(message));
         }
+        catch (ResponseException e) {
+            res.status(e.errorCode());
+            message = e.getMessage();
+            return serializer.toJson(new FailureMessageResponse(message));
+        }
     }
 
     public Object createGame(Request req, Response res) throws AuthFailedException{
@@ -152,6 +176,11 @@ public class Server {
         catch (AuthFailedException e){
             message = "Error: Unauthorized";
             res.status(401);
+            return serializer.toJson(new FailureMessageResponse(message));
+        }
+        catch (ResponseException e) {
+            res.status(e.errorCode());
+            message = e.getMessage();
             return serializer.toJson(new FailureMessageResponse(message));
         }
     }
@@ -173,6 +202,11 @@ public class Server {
         catch (ColorTakenException e){
             res.status(403);
             return serializer.toJson(new FailureMessageResponse(e.getMessage()));
+        }
+        catch (ResponseException e) {
+            res.status(e.errorCode());
+            var message = e.getMessage();
+            return serializer.toJson(new FailureMessageResponse(message));
         }
       return "";
     }

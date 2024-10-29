@@ -2,6 +2,7 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.DataAccess;
+import dataaccess.exception.ResponseException;
 import model.GameData;
 import service.exception.AuthFailedException;
 import service.exception.BadInputException;
@@ -17,18 +18,18 @@ public class GameService {
     this.data = data;
   }
 
-  public ArrayList<GameData> listGames(String authToken) throws AuthFailedException {
+  public ArrayList<GameData> listGames(String authToken) throws AuthFailedException, ResponseException {
     verifyAuth(authToken);
     return data.getAllGames();
   }
 
-  public Integer createGame(String authToken, String gameName) throws AuthFailedException {
+  public Integer createGame(String authToken, String gameName) throws AuthFailedException, ResponseException {
     verifyAuth(authToken);
     return data.createGame(gameName);
   }
 
   public void joinGame(String authToken, Integer gameID, ChessGame.TeamColor color)
-          throws AuthFailedException, BadInputException, ColorTakenException {
+          throws AuthFailedException, BadInputException, ColorTakenException, ResponseException {
     String userName = verifyAuth(authToken);
     if(gameID != null) {
       GameData game=data.getGame(gameID);
@@ -57,7 +58,7 @@ public class GameService {
     }
   }
 
-  public String verifyAuth(String authToken) throws AuthFailedException {
+  public String verifyAuth(String authToken) throws AuthFailedException, ResponseException {
     if(data.getAuth(authToken) == null){
       throw new AuthFailedException("Error: Unauthorized");
     }

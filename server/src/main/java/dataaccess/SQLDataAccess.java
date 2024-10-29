@@ -14,17 +14,14 @@ public class SQLDataAccess implements DataAccess{
       configureDatabase();
     }
     catch(Exception e){
-      throw new ResponseException(500, "Error connecting to database");
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
     }
   }
   Connection getConnection() throws DataAccessException, SQLException {
-    try(var conn=DatabaseManager.getConnection()) {
-      conn.setCatalog("chess");
-      return conn;
-    }
+      return DatabaseManager.getConnection();
   }
 
-  void configureDatabase() {
+  void configureDatabase() throws ResponseException {
     try (var conn = getConnection()){
       var createDBStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS chess");
       createDBStatement.executeUpdate();
@@ -64,10 +61,13 @@ public class SQLDataAccess implements DataAccess{
       preparedStatement3.close();
       System.out.println("Successful initialization of database");
     }
+    catch(Exception e){
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
+    }
   }
 
   @Override
-  public void addUser(UserData person) throws SQLException, DataAccessException {
+  public void addUser(UserData person) throws ResponseException {
     try(var conn = getConnection()) {
       var username=person.username();
       var password=person.password();
@@ -79,11 +79,13 @@ public class SQLDataAccess implements DataAccess{
         preparedStatement.executeUpdate();
 
     }
-
+    catch(Exception e){
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
+    }
   }
 
   @Override
-  public UserData getUser(String username) {
+  public UserData getUser(String username) throws ResponseException {
     try(var conn = getConnection()) {
       var prepped = conn.prepareStatement("SELECT * FROM users WHERE username = ?;");
       prepped.setString(1, username);
@@ -92,20 +94,26 @@ public class SQLDataAccess implements DataAccess{
         return new UserData(result.getString("username"), result.getString("password"), result.getString("email"));
       }
     }
+    catch(Exception e){
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
+    }
     return null;
   }
 
   @Override
-  public void deleteUser(String username) {
+  public void deleteUser(String username) throws ResponseException {
     try(var conn = getConnection()) {
       var prepped=conn.prepareStatement("DELETE FROM users WHERE username = ?;");
       prepped.setString(1, username);
       prepped.executeUpdate();
     }
+    catch(Exception e){
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
+    }
   }
 
   @Override
-  public void addAuth(AuthData authData) {
+  public void addAuth(AuthData authData) throws ResponseException {
     try(var conn = getConnection()){
       var token = authData.authToken();
       var username = authData.username();
@@ -114,11 +122,13 @@ public class SQLDataAccess implements DataAccess{
       preparedStatement.setString(2, username);
       preparedStatement.executeUpdate();
     }
-
+    catch(Exception e){
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
+    }
   }
 
   @Override
-  public AuthData getAuth(String token) {
+  public AuthData getAuth(String token) throws ResponseException {
     try(var conn = getConnection()) {
       var prepped = conn.prepareStatement("SELECT * FROM auth WHERE authToken = ?;");
       prepped.setString(1, token);
@@ -127,15 +137,21 @@ public class SQLDataAccess implements DataAccess{
         return new AuthData(result.getString("authToken"), result.getString("username"));
       }
     }
+    catch(Exception e){
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
+    }
     return null;
   }
 
   @Override
-  public void deleteAuth(String token) {
+  public void deleteAuth(String token) throws ResponseException {
     try(var conn = getConnection()) {
       var prepped=conn.prepareStatement("DELETE FROM auth WHERE authToken = ?;");
       prepped.setString(1, token);
       prepped.executeUpdate();
+    }
+    catch(Exception e){
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
     }
 
   }
@@ -171,7 +187,7 @@ public class SQLDataAccess implements DataAccess{
   }
 
   @Override
-  public void clearAll() {
+  public void clearAll() throws ResponseException {
     try(var conn = getConnection()){
       var preparedStatement1 = conn.prepareStatement("TRUNCATE TABLE users");
       var preparedStatement2 = conn.prepareStatement("TRUNCATE TABLE auth");
@@ -180,14 +196,8 @@ public class SQLDataAccess implements DataAccess{
       preparedStatement2.executeUpdate();
       preparedStatement3.executeUpdate();
     }
-
+    catch(Exception e){
+      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
+    }
   }
 }
-
-
-//    try(var conn = getConnection()){
-//
-//    }
-//    catch(SQLException e){
-//
-//    }
