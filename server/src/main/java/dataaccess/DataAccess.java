@@ -1,12 +1,13 @@
 package dataaccess;
 
+import dataaccess.exception.DataAccessException;
 import model.*;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface DataAccess {
-  public void addUser(UserData person);
+  public void addUser(UserData person) throws SQLException, DataAccessException;
   public UserData getUser(String username);
   public void deleteUser(String username);
 

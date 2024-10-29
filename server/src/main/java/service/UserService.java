@@ -2,6 +2,8 @@ package service;
 
 import dataaccess.DataAccess;
 import model.*;
+import service.exception.BadInputException;
+import service.exception.UsernameTakenException;
 
 import java.util.UUID;
 

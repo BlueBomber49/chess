@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import model.*;
+import service.exception.AuthFailedException;
 
 import java.util.Objects;
 import java.util.UUID;

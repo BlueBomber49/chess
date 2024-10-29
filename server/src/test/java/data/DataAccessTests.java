@@ -3,9 +3,12 @@ package data;
 import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
+import dataaccess.SQLDataAccess;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.sql.SQLDataException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -18,17 +21,24 @@ public class DataAccessTests {
   GameData game;
   @BeforeEach
   public void setup(){
-    data = new MemoryDataAccess();
+    data = new SQLDataAccess();
+    data.clearAll();
     bob = new UserData("bob", "canwefixit", "yes@wecan");
     felix = new UserData("felix", "icanfixit", "gonn@wreckit");
     auth = new AuthData("supahsecuretoken", "bob");
   }
 
   @Test
-  public void addUserTest(){
+  public void goodAddUserTest(){
     assertNull(data.getUser(bob.username()));
     data.addUser(bob);
     assertEquals(bob, data.getUser(bob.username()));
+  }
+
+  @Test
+  public void badAddUserTest(){
+    var badUser = new UserData("badUser", null, null);
+
   }
 
   @Test

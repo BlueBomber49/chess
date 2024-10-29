@@ -6,6 +6,7 @@ import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.exception.AuthFailedException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,7 +28,7 @@ public class AuthServiceTests {
   }
 
   @Test
-  public void loginFailTest() throws AuthFailedException{
+  public void loginFailTest() throws AuthFailedException {
     assertThrows(AuthFailedException.class, () -> service.loginUser("james", "canwefixit"));
     assertThrows(AuthFailedException.class, () -> service.loginUser("bob", "wrong password"));
   }
