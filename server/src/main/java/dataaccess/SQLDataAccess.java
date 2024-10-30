@@ -26,9 +26,7 @@ public class SQLDataAccess implements DataAccess{
 
   void configureDatabase() throws ResponseException {
     try (var conn = getConnection()){
-      var createDBStatement = conn.prepareStatement("CREATE DATABASE IF NOT EXISTS chess");
-      createDBStatement.executeUpdate();
-      conn.setCatalog("chess");
+      DatabaseManager.createDatabase();
 
       //Add create tables statements
       var createUserTableStatement = """
