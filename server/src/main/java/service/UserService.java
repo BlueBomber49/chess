@@ -3,9 +3,9 @@ package service;
 import dataaccess.DataAccess;
 import dataaccess.exception.ResponseException;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 import service.exception.BadInputException;
 import service.exception.UsernameTakenException;
-
 import java.util.UUID;
 
 public class UserService {
@@ -17,7 +17,9 @@ public class UserService {
   public AuthData registerUser(UserData user) throws BadInputException, UsernameTakenException, ResponseException {
     if (user.password() != null && user.username() != null && user.email() != null) {
       if (data.getUser(user.username()) == null) {
-        data.addUser(user);
+        String hashedPw =BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        UserData encryptedUser = new UserData(user.username(), hashedPw, user.email());
+        data.addUser(encryptedUser);
         UUID uuid=UUID.randomUUID();
         String id=uuid.toString();
         AuthData auth=new AuthData(id, user.username());

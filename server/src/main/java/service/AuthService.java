@@ -3,6 +3,7 @@ package service;
 import dataaccess.DataAccess;
 import dataaccess.exception.ResponseException;
 import model.*;
+import org.mindrot.jbcrypt.BCrypt;
 import service.exception.AuthFailedException;
 
 import java.util.Objects;
@@ -18,7 +19,7 @@ public class AuthService {
   public AuthData loginUser(String username, String password) throws AuthFailedException, ResponseException {
     UserData user = data.getUser(username);
     if(user != null){
-      if(Objects.equals(user.password(), password)){
+      if(BCrypt.checkpw(password, user.password())){
         UUID uuid = UUID.randomUUID();
         String id = uuid.toString();
         AuthData auth = new AuthData(id, username);

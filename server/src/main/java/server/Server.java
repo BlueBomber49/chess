@@ -20,8 +20,13 @@ public class Server {
     private DataAccess data;
     private Gson serializer = new Gson();
 
-    public Server(){
-        data = new MemoryDataAccess();
+    public Server() {
+        try {
+            data=new SQLDataAccess();
+        }
+        catch(Exception e){
+            data = new MemoryDataAccess();
+        }
         this.admin = new AdminService(data);
         this.auth = new AuthService(data);
         this.game = new GameService(data);
