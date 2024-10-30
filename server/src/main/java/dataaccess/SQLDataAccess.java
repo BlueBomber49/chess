@@ -40,7 +40,7 @@ public class SQLDataAccess implements DataAccess{
               )""";
       var createAuthTableStatement = """
               CREATE TABLE IF NOT EXISTS auth (
-              authToken VARCHAR(30) NOT NULL,
+              authToken VARCHAR(255) NOT NULL,
               username VARCHAR(255) NOT NULL
               )""";
       var createGameTableStatement = """
