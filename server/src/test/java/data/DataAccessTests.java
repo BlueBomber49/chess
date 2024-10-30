@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLDataException;
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,13 +38,13 @@ public class DataAccessTests {
   }
 
   @Test
-  public void badAddUserTest(){
+  public void badAddUserTest() throws ResponseException {
     var badUser = new UserData("badUser", null, null);
-
+    assertThrows(ResponseException.class, () -> data.addUser(badUser));
   }
 
   @Test
-  public void deleteUserTest() throws ResponseException {
+  public void goodDeleteUserTest() throws ResponseException {
     data.addUser(felix);
     assertEquals(felix, data.getUser(felix.username()));
     data.deleteUser("felix");
@@ -51,23 +52,41 @@ public class DataAccessTests {
   }
 
   @Test
-  public void addAuthTest() throws ResponseException {
+  public void badDeleteUserTest() throws ResponseException {
+    data.addUser(felix);
+    assertDoesNotThrow(() -> data.deleteUser("misspelled"));
+  }
+
+  @Test
+  public void goodAddAuthTest() throws ResponseException {
     assertNull(data.getAuth(auth.authToken()));
     data.addAuth(auth);
     assertEquals(auth, data.getAuth(auth.authToken()));
   }
 
   @Test
-  public void deleteAuthTest() throws ResponseException {
+  public void badAddAuthTest() throws ResponseException {
+    AuthData badAuth = new AuthData(null, "Bob");
+    assertThrows(ResponseException.class, () -> data.addAuth(badAuth));
+  }
+
+  @Test
+  public void goodDeleteAuthTest() throws ResponseException {
     data.addAuth(auth);
     assertEquals(auth, data.getAuth(auth.authToken()));
     data.deleteAuth(auth.authToken());
     assertNull(data.getAuth(auth.authToken()));
   }
 
+  @Test
+  public void badDeleteAuthTest() throws ResponseException {
+    data.addAuth(auth);
+    assertDoesNotThrow(() -> data.deleteAuth("misspelled"));
+  }
+
 
   @Test
-  public void createGameTest(){
+  public void goodCreateGameTest() throws ResponseException {
     assertNull(data.getGame(1));
     int id = data.createGame("Bob's game");
     GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
@@ -75,7 +94,12 @@ public class DataAccessTests {
   }
 
   @Test
-  public void deleteGameTest(){
+  public void badCreateGameTest() throws ResponseException {
+    assertThrows(ResponseException.class, () -> data.createGame(null));
+  }
+
+  @Test
+  public void goodDeleteGameTest() throws ResponseException {
     int id = data.createGame("Bob's game");
     GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
     assertEquals(expected, data.getGame(id));
@@ -84,7 +108,12 @@ public class DataAccessTests {
   }
 
   @Test
-  public void updateGameTest(){
+  public void badDeleteGameTest() throws ResponseException {
+    assertDoesNotThrow(() -> data.deleteGame(9999));
+  }
+
+  @Test
+  public void goodUpdateGameTest() throws ResponseException {
     int id = data.createGame("Bob's game");
     GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
     assertEquals(expected, data.getGame(id));
@@ -94,11 +123,38 @@ public class DataAccessTests {
   }
 
   @Test
-  public void getGameByNameTest(){
+  public void badUpdateGameTest() throws ResponseException {
+    int id = data.createGame("Bob's game");
+    GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
+    assertEquals(expected, data.getGame(id));
+    GameData badUpdated = new GameData(1, "Bob", "Felix", null, null);
+    assertThrows(ResponseException.class, () -> data.updateGame(badUpdated));
+  }
+
+  @Test
+  public void goodGetGameTest() throws ResponseException {
     int id = data.createGame("Bob's game");
     GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
     assertEquals(expected, data.getGame(id));
     assertEquals(data.getGame(id), data.getGame("Bob's game"));
+  }
+
+  @Test
+  public void badGetGameTest() throws ResponseException {
+    int id = data.createGame("Bob's game");
+    assertNull(data.getGame(null));
+  }
+
+  @Test
+  public void getAllGamesTest() throws ResponseException{
+    int id = data.createGame("Bob's game");
+    int id2 = data.createGame("Felix's game");
+    GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
+    GameData expected2 = new GameData(2, null, null, "Felix's game", new ChessGame());
+    var list = new ArrayList<GameData>();
+    list.add(expected);
+    list.add(expected2);
+    assertEquals(list, data.getAllGames());
   }
 
 
