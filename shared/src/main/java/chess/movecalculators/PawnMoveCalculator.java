@@ -75,17 +75,8 @@ public class PawnMoveCalculator extends MoveCalculator{
     }
 
     if(start.getRow() == 7){ //Promotion pieces need added to all moves
-      ArrayList<ChessMove> promotionMoveList = new ArrayList<>();
-      for(ChessMove move : moveList){
-        for(var type : ChessPiece.PieceType.values()){
-          if(type != ChessPiece.PieceType.KING && type != ChessPiece.PieceType.PAWN) {
-            ChessMove moveToAdd=new ChessMove(move.getStartPosition(), move.getEndPosition(), type);
-            promotionMoveList.add(moveToAdd);
-          }
-        }
 
-      }
-      return promotionMoveList;
+      return addPromotionMoves(moveList);
     }
     return moveList;
   }
@@ -138,19 +129,22 @@ public class PawnMoveCalculator extends MoveCalculator{
     }
 
     if(start.getRow() == 2){ //Promotion pieces need added to all moves
-      ArrayList<ChessMove> promotionMoveList = new ArrayList<>();
-      for(ChessMove move : moveList){
-        for(var type : ChessPiece.PieceType.values()){
-          if(type != ChessPiece.PieceType.KING && type != ChessPiece.PieceType.PAWN) {
-            ChessMove moveToAdd=new ChessMove(move.getStartPosition(), move.getEndPosition(), type);
-            promotionMoveList.add(moveToAdd);
-          }
-        }
-
-      }
-      return promotionMoveList;
+      return addPromotionMoves(moveList);
     }
 
     return moveList;
+  }
+
+  public ArrayList<ChessMove> addPromotionMoves(ArrayList<ChessMove> moveList) {
+    var promotionMoveList = new ArrayList<ChessMove>();
+    for(ChessMove move : moveList){
+      for(var type : ChessPiece.PieceType.values()){
+        if(type != ChessPiece.PieceType.KING && type != ChessPiece.PieceType.PAWN) {
+          ChessMove moveToAdd=new ChessMove(move.getStartPosition(), move.getEndPosition(), type);
+          promotionMoveList.add(moveToAdd);
+        }
+      }
+    }
+    return promotionMoveList;
   }
 }
