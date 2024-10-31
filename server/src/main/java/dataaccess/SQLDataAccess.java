@@ -23,42 +23,45 @@ public class SQLDataAccess implements DataAccess{
 
 
   void configureDatabase() throws ResponseException {
-    try (var conn = DatabaseManager.getConnection()){
+    try {
       DatabaseManager.createDatabase();
+      try (var conn=DatabaseManager.getConnection()) {
 
-      //Add create tables statements
-      var createUserTableStatement = """
-              CREATE TABLE IF NOT EXISTS users (
-              username VARCHAR(255) NOT NULL,
-              password VARCHAR(255) NOT NULL,
-              email VARCHAR(255) NOT NULL,
-              PRIMARY KEY(username)
-              )""";
-      var createAuthTableStatement = """
-              CREATE TABLE IF NOT EXISTS auth (
-              authToken VARCHAR(255) NOT NULL,
-              username VARCHAR(255) NOT NULL
-              )""";
-      var createGameTableStatement = """
-              CREATE TABLE IF NOT EXISTS games (
-              gameID INT NOT NULL AUTO_INCREMENT,
-              whiteUsername VARCHAR(255) DEFAULT NULL,
-              blackUsername VARCHAR(255) DEFAULT NULL,
-              gameName VARCHAR(255) NOT NULL,
-              chessGame TEXT NOT NULL,
-              PRIMARY KEY(gameID)
-              )
-              """;
-      var preparedStatement1 = conn.prepareStatement(createUserTableStatement);
-      preparedStatement1.executeUpdate();
-      preparedStatement1.close();
-      var preparedStatement2 = conn.prepareStatement(createAuthTableStatement);
-      preparedStatement2.executeUpdate();
-      preparedStatement2.close();
-      var preparedStatement3 = conn.prepareStatement(createGameTableStatement);
-      preparedStatement3.executeUpdate();
-      preparedStatement3.close();
-      System.out.println("Successful initialization of database");
+
+        //Add create tables statements
+        var createUserTableStatement="""
+                CREATE TABLE IF NOT EXISTS users (
+                username VARCHAR(255) NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                email VARCHAR(255) NOT NULL,
+                PRIMARY KEY(username)
+                )""";
+        var createAuthTableStatement="""
+                CREATE TABLE IF NOT EXISTS auth (
+                authToken VARCHAR(255) NOT NULL,
+                username VARCHAR(255) NOT NULL
+                )""";
+        var createGameTableStatement="""
+                CREATE TABLE IF NOT EXISTS games (
+                gameID INT NOT NULL AUTO_INCREMENT,
+                whiteUsername VARCHAR(255) DEFAULT NULL,
+                blackUsername VARCHAR(255) DEFAULT NULL,
+                gameName VARCHAR(255) NOT NULL,
+                chessGame TEXT NOT NULL,
+                PRIMARY KEY(gameID)
+                )
+                """;
+        var preparedStatement1=conn.prepareStatement(createUserTableStatement);
+        preparedStatement1.executeUpdate();
+        preparedStatement1.close();
+        var preparedStatement2=conn.prepareStatement(createAuthTableStatement);
+        preparedStatement2.executeUpdate();
+        preparedStatement2.close();
+        var preparedStatement3=conn.prepareStatement(createGameTableStatement);
+        preparedStatement3.executeUpdate();
+        preparedStatement3.close();
+        System.out.println("Successful initialization of database");
+      }
     }
     catch(Exception e){
       throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
