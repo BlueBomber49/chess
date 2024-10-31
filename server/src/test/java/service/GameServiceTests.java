@@ -60,7 +60,7 @@ public class GameServiceTests {
   public void successfulCreateGame() throws AuthFailedException, ResponseException {
     service.createGame("supahsecuretoken", "new game");
     GameData expected = new GameData(3, null, null, "new game", new ChessGame());
-    assertEquals(expected, data.getGame("new game"));
+    assertEquals(expected, data.getGame(3));
   }
 
   @Test
@@ -68,17 +68,17 @@ public class GameServiceTests {
     assertThrows(AuthFailedException.class, () -> service.createGame("fake token", "null"));
     service.createGame("supahsecuretoken", "new game");
     GameData notExpected = new GameData(3, null, null, "wrong name", new ChessGame());
-    assertNotEquals(notExpected, data.getGame("new game"));
+    assertNotEquals(notExpected, data.getGame(3));
   }
 
   @Test
   public void successfulJoinGame() throws AuthFailedException, BadInputException, ColorTakenException, ResponseException {
     service.joinGame("supahsecuretoken", 1, ChessGame.TeamColor.WHITE);
     GameData game1 = new GameData(1, "bob", null, "Bob's game", new ChessGame());
-    assertEquals(game1, data.getGame("Bob's game"));
+    assertEquals(game1, data.getGame(1));
     service.joinGame("token", 1, ChessGame.TeamColor.BLACK);
     game1 = new GameData(1, "bob", "felix", "Bob's game", new ChessGame());
-    assertEquals(game1, data.getGame("Bob's game"));
+    assertEquals(game1, data.getGame(1));
   }
 
   @Test

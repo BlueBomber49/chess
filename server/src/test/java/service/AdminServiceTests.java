@@ -32,7 +32,7 @@ public class AdminServiceTests {
   @Test
   public void clearTest() throws ResponseException {
     data.clearAll();
-    assertNull(data.getGame("Bob's game"));
+    assertNull(data.getGame(1));
     assertNull(data.getAuth("supahsecuretoken"));
     assertNull(data.getUser(felix.username()));
     assertNull(data.getUser(bob.username()));

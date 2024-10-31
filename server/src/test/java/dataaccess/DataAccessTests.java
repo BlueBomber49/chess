@@ -136,13 +136,13 @@ public class DataAccessTests {
     int id = data.createGame("Bob's game");
     GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
     assertEquals(expected, data.getGame(id));
-    assertEquals(data.getGame(id), data.getGame("Bob's game"));
+    assertEquals(data.getGame(id), data.getGame(1));
   }
 
   @Test
   public void badGetGameTest() throws ResponseException {
     int id = data.createGame("Bob's game");
-    assertNull(data.getGame(null));
+    assertNull(data.getGame(30496394));
   }
 
   @Test

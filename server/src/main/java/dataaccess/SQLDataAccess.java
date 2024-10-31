@@ -239,31 +239,6 @@ public class SQLDataAccess implements DataAccess{
   }
 
   @Override
-  public GameData getGame(String gameName) throws ResponseException {
-    try(var conn = DatabaseManager.getConnection()) {
-      var prepped = conn.prepareStatement("SELECT * FROM games WHERE gameName = ?;");
-      prepped.setString(1, gameName);
-      var result = prepped.executeQuery();
-      if(result.next()){
-        int gameID = result.getInt("gameID");
-        String whiteUsername = result.getString("whiteUsername");
-        String blackUsername = result.getString("blackUsername");
-        String resultGameName = result.getString("gameName");
-        String gameJson = result.getString("chessGame");
-        ChessGame game = serializer.fromJson(gameJson, ChessGame.class);
-        return new GameData(gameID, whiteUsername, blackUsername, resultGameName, game);
-      }
-    }
-    catch(DataAccessException e){
-      throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
-    }
-    catch(SQLException e){
-      throw new ResponseException(400, "Error: Invalid value given");
-    }
-    return null;
-  }
-
-  @Override
   public GameData getGame(int gameId) throws ResponseException {
     try(var conn = DatabaseManager.getConnection()) {
       var prepped = conn.prepareStatement("SELECT * FROM games WHERE gameID = ?;");
