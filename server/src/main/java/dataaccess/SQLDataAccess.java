@@ -20,12 +20,10 @@ public class SQLDataAccess implements DataAccess{
       throw new ResponseException(500, "Error connecting to database: " + e.getMessage());
     }
   }
-  Connection getConnection() throws DataAccessException {
-      return DatabaseManager.getConnection();
-  }
+
 
   void configureDatabase() throws ResponseException {
-    try (var conn = getConnection()){
+    try (var conn = DatabaseManager.getConnection()){
       DatabaseManager.createDatabase();
 
       //Add create tables statements
@@ -69,7 +67,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public void addUser(UserData person) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var username=person.username();
       var password=person.password();
       var email=person.email();
@@ -90,7 +88,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public UserData getUser(String username) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var prepped = conn.prepareStatement("SELECT * FROM users WHERE username = ?;");
       prepped.setString(1, username);
       var result = prepped.executeQuery();
@@ -109,7 +107,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public void deleteUser(String username) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var prepped=conn.prepareStatement("DELETE FROM users WHERE username = ?;");
       prepped.setString(1, username);
       prepped.executeUpdate();
@@ -124,7 +122,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public void addAuth(AuthData authData) throws ResponseException {
-    try(var conn = getConnection()){
+    try(var conn = DatabaseManager.getConnection()){
       var token = authData.authToken();
       var username = authData.username();
       var preparedStatement = conn.prepareStatement("INSERT INTO auth (authToken, username) VALUES(?,?);");
@@ -142,7 +140,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public AuthData getAuth(String token) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var prepped = conn.prepareStatement("SELECT * FROM auth WHERE authToken = ?;");
       prepped.setString(1, token);
       var result = prepped.executeQuery();
@@ -161,7 +159,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public void deleteAuth(String token) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var prepped=conn.prepareStatement("DELETE FROM auth WHERE authToken = ?;");
       prepped.setString(1, token);
       prepped.executeUpdate();
@@ -177,7 +175,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public int createGame(String gameName) throws ResponseException {
-    try(var conn = getConnection()){
+    try(var conn = DatabaseManager.getConnection()){
       var prepped = conn.prepareStatement("INSERT INTO games (gameName, chessGame) VALUES (?, ?)", Statement.RETURN_GENERATED_KEYS);
       ChessGame game = new ChessGame();
       prepped.setString(1, gameName);
@@ -198,7 +196,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public void deleteGame(int gameId) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var prepped=conn.prepareStatement("DELETE FROM games WHERE gameID = ?;");
       prepped.setInt(1, gameId);
       prepped.executeUpdate();
@@ -213,7 +211,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public void updateGame(GameData game) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var whiteUsername = game.whiteUsername();
       var blackUsername = game.blackUsername();
       var gameName = game.gameName();
@@ -239,7 +237,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public GameData getGame(String gameName) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var prepped = conn.prepareStatement("SELECT * FROM games WHERE gameName = ?;");
       prepped.setString(1, gameName);
       var result = prepped.executeQuery();
@@ -264,7 +262,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public GameData getGame(int gameId) throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var prepped = conn.prepareStatement("SELECT * FROM games WHERE gameID = ?;");
       prepped.setInt(1, gameId);
       var result = prepped.executeQuery();
@@ -289,7 +287,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public ArrayList<GameData> getAllGames() throws ResponseException {
-    try(var conn = getConnection()) {
+    try(var conn = DatabaseManager.getConnection()) {
       var prepped = conn.prepareStatement("SELECT * FROM games;");
       var result = prepped.executeQuery();
       var gameList = new ArrayList<GameData>();
@@ -315,7 +313,7 @@ public class SQLDataAccess implements DataAccess{
 
   @Override
   public void clearAll() throws ResponseException {
-    try(var conn = getConnection()){
+    try(var conn = DatabaseManager.getConnection()){
       var preparedStatement1 = conn.prepareStatement("TRUNCATE TABLE users");
       var preparedStatement2 = conn.prepareStatement("TRUNCATE TABLE auth");
       var preparedStatement3 = conn.prepareStatement("TRUNCATE TABLE games");
