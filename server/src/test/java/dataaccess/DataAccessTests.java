@@ -146,7 +146,7 @@ public class DataAccessTests {
   }
 
   @Test
-  public void getAllGamesTest() throws ResponseException{
+  public void goodGetAllGamesTest() throws ResponseException{
     int id = data.createGame("Bob's game");
     int id2 = data.createGame("Felix's game");
     GameData expected = new GameData(1, null, null, "Bob's game", new ChessGame());
@@ -155,6 +155,11 @@ public class DataAccessTests {
     list.add(expected);
     list.add(expected2);
     assertEquals(list, data.getAllGames());
+  }
+
+  @Test
+  public void badGetAllGamesTest() throws ResponseException{
+    assertEquals(new ArrayList<>(), data.getAllGames());
   }
 
 
