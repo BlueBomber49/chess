@@ -1,12 +1,11 @@
 package service;
 
 import dataaccess.DataAccess;
-import dataaccess.exception.ResponseException;
+import exception.ResponseException;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;
-import service.exception.AuthFailedException;
+import exception.AuthFailedException;
 
-import java.util.Objects;
 import java.util.UUID;
 
 public class AuthService {

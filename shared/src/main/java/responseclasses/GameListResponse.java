@@ -1,4 +1,4 @@
-package service.responseclasses;
+package responseclasses;
 
 import java.util.ArrayList;
 

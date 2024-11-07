@@ -1,4 +1,4 @@
-package dataaccess.exception;
+package exception;
 
 public class ResponseException extends Exception{
   private final int errorCode;

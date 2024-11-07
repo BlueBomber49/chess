@@ -1,4 +1,4 @@
-package service.requestclasses;
+package requestclasses;
 
 public record CreateGameRequest(String gameName) {
 }
