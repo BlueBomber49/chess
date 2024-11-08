@@ -1,4 +1,4 @@
-package service.responseclasses;
+package responseclasses;
 
 public record FailureMessageResponse(String message) {
 }

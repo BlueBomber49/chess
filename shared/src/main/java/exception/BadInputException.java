@@ -1,4 +1,4 @@
-package service.exception;
+package exception;
 
 public class BadInputException extends Exception {
 

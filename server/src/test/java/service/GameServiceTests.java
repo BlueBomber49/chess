@@ -3,15 +3,15 @@ package service;
 import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
-import dataaccess.exception.ResponseException;
+import exception.ResponseException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.exception.AuthFailedException;
-import service.exception.BadInputException;
-import service.exception.ColorTakenException;
+import exception.AuthFailedException;
+import exception.BadInputException;
+import exception.ColorTakenException;
 
 import java.util.ArrayList;
 

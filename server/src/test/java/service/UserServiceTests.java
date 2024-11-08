@@ -2,13 +2,13 @@ package service;
 
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
-import dataaccess.exception.ResponseException;
+import exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import service.exception.BadInputException;
-import service.exception.UsernameTakenException;
+import exception.BadInputException;
+import exception.UsernameTakenException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
