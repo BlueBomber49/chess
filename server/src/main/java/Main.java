@@ -1,7 +1,10 @@
 import chess.*;
 import dataaccess.SQLDataAccess;
-import exception.ResponseException;
+import dataaccess.exception.ResponseException;
+import model.UserData;
 import server.Server;
+
+import java.sql.SQLException;
 
 import static java.lang.Integer.parseInt;
 

@@ -1,11 +1,15 @@
 package dataaccess;
 
 import chess.ChessGame;
-import exception.ResponseException;
+import dataaccess.DataAccess;
+import dataaccess.MemoryDataAccess;
+import dataaccess.SQLDataAccess;
+import dataaccess.exception.ResponseException;
 import model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.sql.SQLDataException;
 import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;

@@ -1,4 +1,4 @@
-package exception;
+package service.exception;
 
 public class ColorTakenException extends Exception{
   public ColorTakenException(String message) {

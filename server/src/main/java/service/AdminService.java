@@ -1,7 +1,7 @@
 package service;
 
 import dataaccess.DataAccess;
-import exception.ResponseException;
+import dataaccess.exception.ResponseException;
 
 public class AdminService {
   private DataAccess data;

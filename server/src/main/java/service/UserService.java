@@ -1,11 +1,11 @@
 package service;
 
 import dataaccess.DataAccess;
-import exception.ResponseException;
+import dataaccess.exception.ResponseException;
 import model.*;
 import org.mindrot.jbcrypt.BCrypt;
-import exception.BadInputException;
-import exception.UsernameTakenException;
+import service.exception.BadInputException;
+import service.exception.UsernameTakenException;
 import java.util.UUID;
 
 public class UserService {

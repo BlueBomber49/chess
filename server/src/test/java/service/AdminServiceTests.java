@@ -2,7 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import dataaccess.MemoryDataAccess;
-import exception.ResponseException;
+import dataaccess.exception.ResponseException;
 import model.AuthData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeEach;

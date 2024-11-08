@@ -1,8 +1,10 @@
 package dataaccess;
 
-import exception.ResponseException;
+import dataaccess.exception.DataAccessException;
+import dataaccess.exception.ResponseException;
 import model.*;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public interface DataAccess {

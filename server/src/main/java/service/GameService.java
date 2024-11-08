@@ -2,11 +2,11 @@ package service;
 
 import chess.ChessGame;
 import dataaccess.DataAccess;
-import exception.ResponseException;
+import dataaccess.exception.ResponseException;
 import model.GameData;
-import exception.AuthFailedException;
-import exception.BadInputException;
-import exception.ColorTakenException;
+import service.exception.AuthFailedException;
+import service.exception.BadInputException;
+import service.exception.ColorTakenException;
 
 import java.util.ArrayList;
 

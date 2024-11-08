@@ -1,4 +1,4 @@
-package exception;
+package service.exception;
 
 public class AuthFailedException extends Exception{
 
