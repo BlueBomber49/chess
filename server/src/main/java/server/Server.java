@@ -16,6 +16,9 @@ import responseclasses.GameIdResponse;
 import responseclasses.GameListResponse;
 import responseclasses.GameResponse;
 import service.*;
+import service.exception.*;
+import service.requestclasses.*;
+import service.responseclasses.*;
 import spark.*;
 
 import java.util.ArrayList;
