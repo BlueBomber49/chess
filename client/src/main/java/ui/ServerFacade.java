@@ -3,8 +3,8 @@ package ui;
 import com.google.gson.Gson;
 import exception.*;
 import model.*;
+import requestclasses.LoginRequest;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.*;
 
@@ -14,9 +14,16 @@ public class ServerFacade {
     serverUrl = url;
   }
 
-  public void register(String username, String password, String email) throws ResponseException {
+  public AuthData register(String username, String password, String email) throws ResponseException {
     var user = new UserData(username, password, email);
-    this.makeRequest("POST", "/user", user, AuthData.class);
+    var auth = this.makeRequest("POST", "/user", user, AuthData.class);
+    return auth;
+  }
+
+  public AuthData login(String username, String password) throws ResponseException {
+    var request = new LoginRequest(username, password);
+    var auth = this.makeRequest("POST", "/session", request, AuthData.class);
+    return auth;
   }
 
   public void clear() throws ResponseException {
@@ -63,13 +70,11 @@ public class ServerFacade {
   private static <T> T readBody(HttpURLConnection http, Class<T> responseClass) throws ResponseException {
     T response = null;
     if(responseClass != null){
-      if(http.getContentLength() > 0) {
         try (InputStream responseBody=http.getInputStream()) {
           InputStreamReader reader=new InputStreamReader(responseBody);
           response = new Gson().fromJson(reader, responseClass);
         } catch (Exception e) {
           throw new ResponseException(500, e.getMessage());
-        }
       }
     }
     return response;
@@ -78,4 +83,6 @@ public class ServerFacade {
   private boolean isSuccessful(int status) {
     return status / 100 == 2;
   }
+
+
 }

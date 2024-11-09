@@ -17,7 +17,7 @@ public class UserService {
   public AuthData registerUser(UserData user) throws BadInputException, UsernameTakenException, ResponseException {
     if (user.password() != null && user.username() != null && user.email() != null) {
       if (data.getUser(user.username()) == null) {
-        String hashedPw =BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        String hashedPw = BCrypt.hashpw(user.password(), BCrypt.gensalt());
         UserData encryptedUser = new UserData(user.username(), hashedPw, user.email());
         data.addUser(encryptedUser);
         UUID uuid=UUID.randomUUID();
