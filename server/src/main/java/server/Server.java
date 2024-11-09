@@ -2,19 +2,10 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import exception.ResponseException;
-import exception.AuthFailedException;
-import exception.BadInputException;
-import exception.ColorTakenException;
-import exception.UsernameTakenException;
+import exception.*;
 import model.*;
-import requestclasses.CreateGameRequest;
-import requestclasses.JoinGameRequest;
-import requestclasses.LoginRequest;
-import responseclasses.FailureMessageResponse;
-import responseclasses.GameIdResponse;
-import responseclasses.GameListResponse;
-import responseclasses.GameResponse;
+import requestclasses.*;
+import responseclasses.*;
 import service.*;
 import spark.*;
 
@@ -105,7 +96,7 @@ public class Server {
 
     }
 
-    public Object login(Request req, Response res) throws AuthFailedException {
+    public Object login(Request req, Response res){
         var body = serializer.fromJson(req.body(), LoginRequest.class);
         var username = body.username();
         var password = body.password();

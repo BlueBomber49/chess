@@ -2,7 +2,9 @@ package ui;
 
 import com.google.gson.Gson;
 import exception.*;
+import model.*;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.*;
 import java.net.*;
 
@@ -12,17 +14,25 @@ public class ServerFacade {
     serverUrl = url;
   }
 
+  public void register(String username, String password, String email) throws ResponseException {
+    var user = new UserData(username, password, email);
+    this.makeRequest("POST", "/user", user, AuthData.class);
+  }
 
+  public void clear() throws ResponseException {
+    this.makeRequest("DELETE", "/db", null, null);
+  }
 
   private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
     try {
       URL url=(new URI(serverUrl + path)).toURL();
       HttpURLConnection http = (HttpURLConnection) url.openConnection();
       http.setRequestMethod(method);
+      http.setDoOutput(true);
 
-      //writeBody(request, http)
+      writeBody(http, request);
       http.connect();
-
+      throwIfNotSuccessful(http);
       return readBody(http, responseClass);
     }
     catch (Exception e) {
@@ -30,12 +40,19 @@ public class ServerFacade {
     }
   }
 
+  private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
+    var status = http.getResponseCode();
+    if (!isSuccessful(status)) {
+      throw new ResponseException(status, "failure: " + status);
+    }
+  }
+
   private static void writeBody(HttpURLConnection http, Object request) throws ResponseException {
     if(request != null) {
       http.addRequestProperty("Content-Type", "application/json");
-      String requestData=new Gson().toJson(request);
-      try(OutputStream o = http.getOutputStream()){
-        o.write(requestData.getBytes());
+      String reqData=new Gson().toJson(request);
+      try (OutputStream reqBody = http.getOutputStream()) {
+        reqBody.write(reqData.getBytes());
       }
       catch (Exception e){
         throw new ResponseException(500, e.getMessage());
