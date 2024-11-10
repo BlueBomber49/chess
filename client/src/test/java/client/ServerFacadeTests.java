@@ -75,4 +75,17 @@ public class ServerFacadeTests {
     public void badLoginTest() throws ResponseException{
         Assertions.assertThrows(ResponseException.class, () -> facade.login(user, password));
     }
+
+    @Test
+    public void goodLogoutTest() throws ResponseException{
+        var auth = facade.login("Felix", "icanfixit");
+        facade.logout(auth.authToken());
+        Assertions.assertNull(data.getAuth("Felix"));
+    }
+
+    @Test
+    public void badLogoutTest() throws ResponseException {
+        Assertions.assertThrows(ResponseException.class, () -> facade.logout("Not an auth token"));
+    }
+    
 }
