@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import dataaccess.DataAccess;
 import dataaccess.SQLDataAccess;
 import exception.ResponseException;
@@ -7,8 +8,11 @@ import model.*;
 import org.junit.jupiter.api.*;
 
 import org.mindrot.jbcrypt.BCrypt;
+import responseclasses.GameResponse;
 import server.Server;
 import ui.ServerFacade;
+
+import java.util.ArrayList;
 
 
 public class ServerFacadeTests {
@@ -87,5 +91,39 @@ public class ServerFacadeTests {
     public void badLogoutTest() throws ResponseException {
         Assertions.assertThrows(ResponseException.class, () -> facade.logout("Not an auth token"));
     }
-    
+
+    @Test
+    public void goodListGamesTest() throws ResponseException {
+        data.createGame("Bob's game");
+        var game1 = new GameResponse(1, null, null, "Bob's game");
+        var game2 = new GameResponse(2, null, null, "Felix's game");
+        data.createGame("Felix's game");
+        var gameList = new ArrayList<GameResponse> ();
+        gameList.add(game1);
+        gameList.add(game2);
+        var auth = facade.register(user, password, email);
+        Assertions.assertEquals(gameList, facade.listGames(auth.authToken()));
+    }
+
+    @Test
+    public void badListGamesTest() throws ResponseException {
+        var auth = facade.register(user, password, email);
+        Assertions.assertEquals(new ArrayList<GameResponse>(), facade.listGames(auth.authToken()));
+    }
+
+    @Test
+    public void goodCreateGameTest() throws ResponseException {
+        var auth = facade.register(user, password, email);
+        var id = facade.createGame(auth.authToken(), "Bob's game").gameID();
+        var game = new GameData(id, null, null, "Bob's game", new ChessGame());
+        Assertions.assertEquals(game, data.getGame(id));
+    }
+
+    @Test
+    public void badCreateGameTest() throws ResponseException {
+        var auth = facade.register(user, password, email);
+        Assertions.assertThrows(ResponseException.class, () ->facade.createGame(auth.authToken(), null));
+    }
+
+
 }

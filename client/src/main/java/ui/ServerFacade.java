@@ -1,12 +1,18 @@
 package ui;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import exception.*;
 import model.*;
+import requestclasses.CreateGameRequest;
 import requestclasses.LoginRequest;
+import responseclasses.GameIdResponse;
+import responseclasses.GameListResponse;
+import responseclasses.GameResponse;
 
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
 
 public class ServerFacade {
   private String serverUrl;
@@ -32,6 +38,20 @@ public class ServerFacade {
 
   public void logout(String authToken) throws ResponseException {
     this.makeRequest("DELETE", "/session", null, null, authToken);
+  }
+
+  public ArrayList<GameResponse> listGames(String authToken) throws ResponseException {
+    GameListResponse list = this.makeRequest("GET", "/game", null, GameListResponse.class, authToken);
+    return list.games();
+  }
+
+  public GameIdResponse createGame(String authToken, String gameName) throws ResponseException {
+    var request = new CreateGameRequest(gameName);
+    return this.makeRequest("POST", "/game", request, GameIdResponse.class, authToken);
+  }
+
+  public void joinGame() throws ResponseException{
+
   }
 
   public void clear() throws ResponseException {
