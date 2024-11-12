@@ -17,33 +17,24 @@ import java.util.ArrayList;
 
 public class ServerFacade {
   private String serverUrl;
-  private String authToken;
-  private String currentUser;
   public ServerFacade(String url){
     serverUrl = url;
-    authToken = null;
-    currentUser = null;
   }
 
   public AuthData register(String username, String password, String email) throws ResponseException {
     var user = new UserData(username, password, email);
     var auth = this.makeRequest("POST", "/user", user, AuthData.class, null);
-    authToken = auth.authToken();
     return auth;
   }
 
   public AuthData login(String username, String password) throws ResponseException {
     var request = new LoginRequest(username, password);
     var auth = this.makeRequest("POST", "/session", request, AuthData.class, null);
-    authToken = auth.authToken();
-    currentUser = username;
     return auth;
   }
 
   public void logout(String auth) throws ResponseException {
     this.makeRequest("DELETE", "/session", null, null, auth);
-    authToken = null;
-    currentUser = null;
   }
 
   public ArrayList<GameResponse> listGames(String authToken) throws ResponseException {
