@@ -125,5 +125,18 @@ public class ServerFacadeTests {
         Assertions.assertThrows(ResponseException.class, () ->facade.createGame(auth.authToken(), null));
     }
 
+    @Test
+    public void goodJoinGameTest() throws ResponseException {
+        var auth = facade.register(user, password, email);
+        var id = data.createGame("Bob's game");
+        facade.joinGame(auth.authToken(), id, ChessGame.TeamColor.WHITE);
+        var game = new GameData(id, "Bob", null, "Bob's game", new ChessGame());
+        Assertions.assertEquals(game, data.getGame(id));
+    }
 
+    @Test
+    public void badJoinGameTest() throws ResponseException{
+        var auth = facade.register(user, password, email);
+        Assertions.assertThrows(ResponseException.class, () -> facade.joinGame(auth.authToken(), -1, ChessGame.TeamColor.WHITE));
+    }
 }

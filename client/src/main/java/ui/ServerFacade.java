@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import exception.*;
 import model.*;
 import requestclasses.CreateGameRequest;
+import requestclasses.JoinGameRequest;
 import requestclasses.LoginRequest;
 import responseclasses.GameIdResponse;
 import responseclasses.GameListResponse;
@@ -17,9 +18,11 @@ import java.util.ArrayList;
 public class ServerFacade {
   private String serverUrl;
   private String authToken;
+  private String currentUser;
   public ServerFacade(String url){
     serverUrl = url;
     authToken = null;
+    currentUser = null;
   }
 
   public AuthData register(String username, String password, String email) throws ResponseException {
@@ -33,11 +36,14 @@ public class ServerFacade {
     var request = new LoginRequest(username, password);
     var auth = this.makeRequest("POST", "/session", request, AuthData.class, null);
     authToken = auth.authToken();
+    currentUser = username;
     return auth;
   }
 
-  public void logout(String authToken) throws ResponseException {
-    this.makeRequest("DELETE", "/session", null, null, authToken);
+  public void logout(String auth) throws ResponseException {
+    this.makeRequest("DELETE", "/session", null, null, auth);
+    authToken = null;
+    currentUser = null;
   }
 
   public ArrayList<GameResponse> listGames(String authToken) throws ResponseException {
@@ -50,8 +56,8 @@ public class ServerFacade {
     return this.makeRequest("POST", "/game", request, GameIdResponse.class, authToken);
   }
 
-  public void joinGame() throws ResponseException{
-
+  public void joinGame(String authToken, Integer gameId, ChessGame.TeamColor color) throws ResponseException{
+    this.makeRequest("PUT", "/game", new JoinGameRequest(color, gameId), null, authToken);
   }
 
   public void clear() throws ResponseException {
