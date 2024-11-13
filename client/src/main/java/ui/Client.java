@@ -21,10 +21,10 @@ public class Client {
     while(state != State.QUIT){
       switch(state){
         case LOGGED_OUT -> {
-          new preLoginRepl(this, state).run();
+          new PreLoginRepl(this, state).run(State.LOGGED_OUT);
         }
         case LOGGED_IN ->{
-          new postLoginRepl(this, state).run();
+          new PostLoginRepl(this, state).run(State.LOGGED_IN);
         }
         case PLAYING_GAME -> {
           System.out.println("Ya can't play yet bro");
