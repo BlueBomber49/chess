@@ -46,46 +46,10 @@ public class Client {
     else {
       switch (state) {
         case LOGGED_OUT -> {
-          switch (cmd) {
-            case "help" -> {
-              return this.help();
-            }
-            case "quit" -> {
-              this.quit();
-              return "quit";
-            }
-            case "register" -> {
-              return this.register(params);
-            }
-            case "login" -> {
-              return this.login(params);
-            }
-            default -> {
-              return "Command not recognized.  Type 'help' for a list of commands";
-            }
-          }
+          return loggedOutEval(cmd, params);
         }
         case LOGGED_IN -> {
-          switch (cmd) {
-            case "logout" -> {
-              return this.logout();
-            }
-            case "create" -> {
-              return "creates game";
-            }
-            case "list" -> {
-              return "tbd";
-            }
-            case "join" -> {
-              return "print board";
-            }
-            case "observe" -> {
-              return "Phase 6";
-            }
-            default -> {
-              return "Command not recognized.  Type 'help' for a list of commands";
-            }
-          }
+          return loggedInEval(cmd, params);
         }
         case PLAYING_GAME -> {
           return "Can't do this yet lol";
@@ -95,6 +59,49 @@ public class Client {
     }
   }
 
+  public String loggedOutEval(String cmd, String[] params){
+    switch (cmd) {
+      case "help" -> {
+        return this.help();
+      }
+      case "quit" -> {
+        this.quit();
+        return "quit";
+      }
+      case "register" -> {
+        return this.register(params);
+      }
+      case "login" -> {
+        return this.login(params);
+      }
+      default -> {
+        return "Command not recognized.  Type 'help' for a list of commands";
+      }
+    }
+  }
+
+  public String loggedInEval(String cmd, String[] params){
+    switch (cmd) {
+      case "logout" -> {
+        return this.logout();
+      }
+      case "create" -> {
+        return this.createGame(params);
+      }
+      case "list" -> {
+        return this.listGames();
+      }
+      case "join" -> {
+        return this.joinGame(params);
+      }
+      case "observe" -> {
+        return this.observeGame(params);
+      }
+      default -> {
+        return "Command not recognized.  Type 'help' for a list of commands";
+      }
+    }
+  }
 
   public String help(){
     return switch(state){
@@ -173,4 +180,40 @@ public class Client {
       return "Error: " + e.getMessage(); //Change at some point
     }
   }
+
+  public String createGame(String[] params){
+    try {
+      if(params.length > 1){
+        return "The game's name cannot contain spaces, please try again";
+      }
+      else if(params.length < 1){
+        return "Please try again, and input a game name";
+      }
+      var name=params[0];
+      facade.createGame(auth, name);
+      return "Game '" + name + "' created successfully!" ;
+    }
+    catch(Exception e) {
+      return "Error: " + e.getMessage(); //Change at some point
+    }
+  }
+
+  public String listGames(){
+    try{
+      var gameList = facade.listGames(auth);
+      return null;
+    }
+    catch(Exception e){
+      return "Error: " + e.getMessage();
+    }
+  }
+
+  public String joinGame(String[] params){
+    return null;
+  }
+
+  public String observeGame(String[] params){
+    return null;
+  }
+
 }
