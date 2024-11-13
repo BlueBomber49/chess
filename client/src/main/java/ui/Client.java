@@ -1,26 +1,63 @@
 package ui;
 
+import exception.BadInputException;
+
 public class Client {
   private ServerFacade facade;
   private String auth;
   private String currentUser;
+  private State state;
   public Client(String url){
     facade = new ServerFacade(url);
     auth = null;
     currentUser = null;
+    state = State.LOGGED_OUT;
   }
 
-
-  public String help(State state){
-    switch(state){
-      case NOT_LOGGED_IN -> {return "";}
-      case LOGGED_IN -> {return "Not yet implemented";}
-      case PLAYING_GAME -> {return "Phase 6 stuff";}
-      default -> {return "Something broke";}
+  public void run(){
+    while(state != State.QUIT){
+      switch(state){
+        case LOGGED_OUT -> {
+          new preLoginRepl(this, state).run();
+        }
+        case LOGGED_IN ->{
+          new postLoginRepl(this, state).run();
+        }
+        case PLAYING_GAME -> {
+          System.out.println("Ya can't play yet bro");
+          state = State.LOGGED_IN;
+        }
+      }
     }
   }
-  public String register(String username, String password, String email){
+
+  public void quit(){
+    state = State.QUIT;
+  }
+
+
+  public String help(){
+    return switch(state){
+      case LOGGED_OUT -> """
+              help:  Gets a list of available commands
+              register [username] [password] [email]: Register as a new user
+              login [username] [password]: Login as an existing user
+              quit:  Terminates the program
+              """;
+      case LOGGED_IN -> "Not yet implemented";
+      case PLAYING_GAME -> "Phase 6 stuff";
+      default -> "Something broke";
+    };
+  }
+
+  public String register(String[] params){
     try{
+      if(params.length != 3){
+        throw new BadInputException("Incorrect register format.  Please use the format 'register [username] [password] [email]");
+      }
+      var username = params[0];
+      var password = params[1];
+      var email = params[2];
       facade.register(username, password, email);
       return "Registration successful.  Welcome, " + username + "!";
     }
@@ -29,11 +66,17 @@ public class Client {
     }
   }
 
-  public String login(String username, String password){
+  public String login(String[] params ){
     try {
+      if(params.length != 2){
+        throw new BadInputException("Incorrect register format.  Please use the format 'register [username] [password] [email]");
+      }
+      var username = params[0];
+      var password = params[1];
       var authData = facade.login(username, password);
       auth = authData.authToken();
       currentUser = authData.username();
+      state = State.LOGGED_IN;
       return "Login successful.  Welcome, " + username + "!";
     }
     catch(Exception e){
@@ -46,6 +89,7 @@ public class Client {
       facade.logout(auth);
       auth = null;
       currentUser = null;
+      state = State.LOGGED_OUT;
       return "Logged out.  See ya later!";
     }
     catch(Exception e) {
