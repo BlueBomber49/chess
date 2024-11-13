@@ -1,6 +1,7 @@
 package ui;
 
 import exception.BadInputException;
+import exception.ResponseException;
 
 public class Client {
   private ServerFacade facade;
@@ -15,6 +16,8 @@ public class Client {
   }
 
   public void run(){
+    System.out.println("Welcome to TerminalChess!  Login to start.");
+    System.out.println(this.help());
     while(state != State.QUIT){
       switch(state){
         case LOGGED_OUT -> {
@@ -29,6 +32,7 @@ public class Client {
         }
       }
     }
+    System.out.println("See ya later!");
   }
 
   public void quit(){
@@ -53,7 +57,7 @@ public class Client {
   public String register(String[] params){
     try{
       if(params.length != 3){
-        throw new BadInputException("Incorrect register format.  Please use the format 'register [username] [password] [email]");
+        return "Incorrect register format.  Please use the format 'register [username] [password] [email]'";
       }
       var username = params[0];
       var password = params[1];
@@ -62,14 +66,17 @@ public class Client {
       return "Registration successful.  Welcome, " + username + "!";
     }
     catch (Exception e){
-      return "Error: " + e.getMessage(); //Change this
+      if(e.getClass() == ResponseException.class){
+        return "That username is taken.  Please select a different username";
+      }
+      return "Error: " + e.getMessage(); //Change this?
     }
   }
 
   public String login(String[] params ){
     try {
       if(params.length != 2){
-        throw new BadInputException("Incorrect register format.  Please use the format 'register [username] [password] [email]");
+        return "Incorrect login format.  Please use the format 'login [username] [password] ";
       }
       var username = params[0];
       var password = params[1];

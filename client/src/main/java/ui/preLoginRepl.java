@@ -50,10 +50,18 @@ public class preLoginRepl {
         return "quit";
       }
       case "register" -> {
-        return client.register(params);
+        var result =  client.register(params);
+        if(result.startsWith("Registration successful.")){
+          state = State.LOGGED_IN;
+        }
+        return result;
       }
       case "login" -> {
-        return client.login(params);
+        var result = client.login(params);
+        if(result.startsWith("Login successful.")){
+          state = State.LOGGED_IN;
+        }
+        return result;
       }
       default -> {
         return "Command not recognized.  Type 'help' for a list of commands";

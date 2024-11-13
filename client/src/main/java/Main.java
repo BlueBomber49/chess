@@ -10,6 +10,6 @@ public class Main {
         var port = server.run(0);
         var client = new Client("http://localhost:" + port);
         client.run();
-
+        System.exit(0);
     }
 }
