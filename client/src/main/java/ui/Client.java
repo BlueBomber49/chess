@@ -3,11 +3,14 @@ package ui;
 import exception.BadInputException;
 import exception.ResponseException;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 public class Client {
   private ServerFacade facade;
   private String auth;
   private String currentUser;
-  private State state;
+  public State state;
   public Client(String url){
     facade = new ServerFacade(url);
     auth = null;
@@ -19,24 +22,77 @@ public class Client {
     System.out.println("Welcome to TerminalChess!  Login to start.");
     System.out.println(this.help());
     while(state != State.QUIT){
-      switch(state){
-        case LOGGED_OUT -> {
-          new PreLoginRepl(this, state).run(State.LOGGED_OUT);
-        }
-        case LOGGED_IN ->{
-          new PostLoginRepl(this, state).run(State.LOGGED_IN);
-        }
-        case PLAYING_GAME -> {
-          System.out.println("Ya can't play yet bro");
-          state = State.LOGGED_IN;
-        }
-      }
+      new Repl(this).run();
     }
     System.out.println("See ya later!");
   }
 
-  public void quit(){
-    state = State.QUIT;
+  public String eval(String input){
+    var tokens = input.toLowerCase().split(" ");
+    String cmd;
+    if(tokens.length > 0){
+      cmd = tokens[0];
+    }
+    else{
+      cmd = "";
+    }
+    var params = Arrays.copyOfRange(tokens, 1, tokens.length);
+    if(Objects.equals(cmd, "help")){
+      return this.help();
+    }
+    else if(Objects.equals(cmd, "quit")){
+      return this.quit();
+    }
+    else {
+      switch (state) {
+        case LOGGED_OUT -> {
+          switch (cmd) {
+            case "help" -> {
+              return this.help();
+            }
+            case "quit" -> {
+              this.quit();
+              return "quit";
+            }
+            case "register" -> {
+              return this.register(params);
+            }
+            case "login" -> {
+              return this.login(params);
+            }
+            default -> {
+              return "Command not recognized.  Type 'help' for a list of commands";
+            }
+          }
+        }
+        case LOGGED_IN -> {
+          switch (cmd) {
+            case "logout" -> {
+              return this.logout();
+            }
+            case "create" -> {
+              return "creates game";
+            }
+            case "list" -> {
+              return "tbd";
+            }
+            case "join" -> {
+              return "print board";
+            }
+            case "observe" -> {
+              return "Phase 6";
+            }
+            default -> {
+              return "Command not recognized.  Type 'help' for a list of commands";
+            }
+          }
+        }
+        case PLAYING_GAME -> {
+          return "Can't do this yet lol";
+        }
+        default -> {return "Broke";}
+      }
+    }
   }
 
 
@@ -48,10 +104,23 @@ public class Client {
               login [username] [password]: Login as an existing user
               quit:  Terminates the program
               """;
-      case LOGGED_IN -> "Not yet implemented";
+      case LOGGED_IN -> """
+              help:  Gets a list of available commands
+              logout:  Logs out and returns you to the previous page
+              list:  Gets a list of available games with their id's
+              create [game name]:  Creates a new game with the given name
+              join [ID] [WHITE|BLACK]:  Joins the game as the chosen color
+              observe [ID]:  Joins the game as an observer
+              quit:  Terminates the program
+              """;
       case PLAYING_GAME -> "Phase 6 stuff";
       default -> "Something broke";
     };
+  }
+
+  public String quit(){
+    state = State.QUIT;
+    return "quit";
   }
 
   public String register(String[] params){
@@ -63,6 +132,7 @@ public class Client {
       var password = params[1];
       var email = params[2];
       facade.register(username, password, email);
+      state = State.LOGGED_IN;
       return "Registration successful.  Welcome, " + username + "!";
     }
     catch (Exception e){
