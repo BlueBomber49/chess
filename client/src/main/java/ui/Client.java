@@ -295,7 +295,10 @@ public class Client {
         return "Error: " + e.errorCode() + " " + e.getMessage();
       }
     }
-    return drawBoard(new ChessGame(), color);
+    drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
+    System.out.println();
+    drawBoard(new ChessGame(), ChessGame.TeamColor.BLACK);
+    return "";
   }
 
   public String observeGame(String[] params) {
@@ -317,19 +320,25 @@ public class Client {
     } catch (Exception e) {
       return "Error: " + e.getMessage();
     }
-    return drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
+    drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
+    System.out.println();
+    drawBoard(new ChessGame(), ChessGame.TeamColor.BLACK);
+    return "";
   }
-
   public String drawBoard(ChessGame game, ChessGame.TeamColor perspective){
     boolean flipped;
+    String header;
     if(perspective == ChessGame.TeamColor.WHITE){
       flipped = true;
+      header = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
+              "    a  b  c  d  e  f  g  h    " + RESET_BG_COLOR + RESET_TEXT_COLOR + "%n";
     }
     else{
       flipped = false;
+      header = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
+              "    h  g  f  e  d  c  b  a    " + RESET_BG_COLOR + RESET_TEXT_COLOR + "%n";
     }
-    String boardString = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
-            "    a  b  c  d  e  f  g  h    " + RESET_BG_COLOR + RESET_TEXT_COLOR + "%n";
+    String boardString = header;
     ChessBoard board = game.getBoard();
     if(!flipped) {
       for (var row=1; row <= 8; row++) {
@@ -341,13 +350,12 @@ public class Client {
         boardString += drawRow(board, row);
       }
     }
-    boardString += SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
-            "    a  b  c  d  e  f  g  h    " + RESET_BG_COLOR + RESET_TEXT_COLOR + "%n";
+    boardString += header;
     System.out.printf(boardString);
     return boardString;
   }
 
-public String drawRow(ChessBoard board, int row){
+  public String drawRow(ChessBoard board, int row){
     String rowString = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + row + " ";
     rowString += SET_TEXT_COLOR_LIGHT_GREY;
     for(var col = 1; col <= 8; col ++){
