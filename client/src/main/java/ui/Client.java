@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import exception.BadInputException;
 import exception.ResponseException;
@@ -123,13 +124,13 @@ public class Client {
   public String help(){
     return switch(state){
       case LOGGED_OUT -> """
-              help:  Gets a list of available commands
+              %nhelp:  Gets a list of available commands
               register [username] [password] [email]: Register as a new user
               login [username] [password]: Login as an existing user
               quit:  Terminates the program
               """;
       case LOGGED_IN -> """
-              help:  Gets a list of available commands
+              %nhelp:  Gets a list of available commands
               logout:  Logs out and returns you to the previous page
               list:  Gets a list of available games with their id's
               create [game name]:  Creates a new game with the given name
@@ -181,6 +182,9 @@ public class Client {
       return "Login successful.  Welcome, " + username + "!";
     }
     catch(Exception e){
+      if(e.getMessage().startsWith("failure: 401")){
+        return "Username or password incorrect";
+      }
       return "Error: " + e.getMessage(); //Change this at some point
     }
   }
@@ -194,6 +198,9 @@ public class Client {
       return "Logged out.  See ya later!";
     }
     catch(Exception e) {
+      if(e.getMessage().startsWith("failure: 401")){
+        return "Not logged in";
+      }
       return "Error: " + e.getMessage(); //Change at some point
     }
   }
@@ -214,6 +221,7 @@ public class Client {
         name=params[0];
       }
       facade.createGame(auth, name);
+      facade.listGames(auth);
       return "Game '" + name + "' created successfully!" ;
     }
     catch(Exception e) {
@@ -226,6 +234,9 @@ public class Client {
       ArrayList<GameResponse> gameList = facade.listGames(auth);
       var result = "";
       games = gameList;
+      if(gameList.isEmpty()){
+        return "No games are currently in progress";
+      }
       for(var i = 1; i <= gameList.size(); i ++){
         var game = gameList.get(i-1);
         var white = (game.whiteUsername() != null) ? game.whiteUsername(): "None";
@@ -251,7 +262,7 @@ public class Client {
         return "Please use format 'join [ID] [WHITE|BLACK]'";
       }
       Integer id = Integer.valueOf(params[0]);
-      if(id >= games.size() || id < 1){
+      if(id > games.size() || id < 1){
         return "Invalid Game ID.  Use 'list' to get a list of games with their id's";
       }
       ChessGame.TeamColor color;
@@ -279,7 +290,7 @@ public class Client {
         return "Error: " + e.errorCode() + " " + e.getMessage();
       }
     }
-    return "Game joined";
+    return drawBoard(new ChessGame());
   }
 
   public String observeGame(String[] params) {
@@ -301,6 +312,11 @@ public class Client {
     } catch (Exception e) {
       return "Error: " + e.getMessage();
     }
-    return "Observing game";
+    return drawBoard(new ChessGame());
+  }
+
+  public String drawBoard(ChessGame game){
+    ChessBoard board = game.getBoard();
+    return board.toString();
   }
 }

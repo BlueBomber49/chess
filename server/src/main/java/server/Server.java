@@ -26,6 +26,7 @@ public class Server {
         }
         catch(Exception e){
             data = new MemoryDataAccess();
+            System.out.println("Alert: Database connection failed.  Storing in memory");
         }
         this.admin = new AdminService(data);
         this.auth = new AuthService(data);
