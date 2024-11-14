@@ -2,13 +2,18 @@ package ui;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 import exception.BadInputException;
 import exception.ResponseException;
 import responseclasses.GameResponse;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Objects;
+
+import static ui.EscapeSequences.*;
 
 public class Client {
   private ServerFacade facade;
@@ -251,6 +256,7 @@ public class Client {
   }
 
   public String joinGame(String[] params){
+    ChessGame.TeamColor color;
     try{
       if(games.isEmpty()){
         facade.listGames(auth);
@@ -265,7 +271,6 @@ public class Client {
       if(id > games.size() || id < 1){
         return "Invalid Game ID.  Use 'list' to get a list of games with their id's";
       }
-      ChessGame.TeamColor color;
       if(Objects.equals(params[1], "white")){
         color = ChessGame.TeamColor.WHITE;
       }
@@ -290,7 +295,7 @@ public class Client {
         return "Error: " + e.errorCode() + " " + e.getMessage();
       }
     }
-    return drawBoard(new ChessGame());
+    return drawBoard(new ChessGame(), color);
   }
 
   public String observeGame(String[] params) {
@@ -305,18 +310,82 @@ public class Client {
         return "Please use format 'observe [ID]'";
       }
       int id=Integer.parseInt(params[0]);
-      if (id >= games.size() || id < 1) {
+      if (id > games.size() || id < 1) {
         return "Invalid Game ID.  Use 'list' to get a list of games with their id's";
       }
       this.state = State.PLAYING_GAME;
     } catch (Exception e) {
       return "Error: " + e.getMessage();
     }
-    return drawBoard(new ChessGame());
+    return drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
   }
 
-  public String drawBoard(ChessGame game){
+  public String drawBoard(ChessGame game, ChessGame.TeamColor perspective){
+    boolean flipped;
+    if(perspective == ChessGame.TeamColor.WHITE){
+      flipped = true;
+    }
+    else{
+      flipped = false;
+    }
+    String boardString = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
+            "    a  b  c  d  e  f  g  h    " + RESET_BG_COLOR + RESET_TEXT_COLOR + "%n";
     ChessBoard board = game.getBoard();
-    return board.toString();
+    if(!flipped) {
+      for (var row=1; row <= 8; row++) {
+        boardString += drawRow(board, row);
+      }
+    }
+    else {
+      for (var row=8; row >= 1; row--) {
+        boardString += drawRow(board, row);
+      }
+    }
+    boardString += SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
+            "    a  b  c  d  e  f  g  h    " + RESET_BG_COLOR + RESET_TEXT_COLOR + "%n";
+    System.out.printf(boardString);
+    return boardString;
+  }
+
+public String drawRow(ChessBoard board, int row){
+    String rowString = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + row + " ";
+    rowString += SET_TEXT_COLOR_LIGHT_GREY;
+    for(var col = 1; col <= 8; col ++){
+      if(row % 2 == 1 && col % 2 == 1){
+        rowString += SET_BG_COLOR_BLACK;
+      }
+      else if(row % 2 == 0 && col % 2 == 0){
+        rowString += SET_BG_COLOR_BLACK;
+      }
+      else{
+        rowString += SET_BG_COLOR_WHITE;
+      }
+      String pieceString = "";
+      ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+      ChessPiece.PieceType type = null;
+      if(piece != null){
+        type = piece.getPieceType();
+      }
+
+      switch(type) {
+        case ROOK -> pieceString += " r";
+        case BISHOP -> pieceString += " b";
+        case KNIGHT -> pieceString += " n";
+        case QUEEN -> pieceString += " q";
+        case KING -> pieceString += " k";
+        case PAWN -> pieceString += " p";
+        case null -> pieceString += "  ";
+      }
+
+      if(piece != null && piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)){
+        pieceString = pieceString.toUpperCase(Locale.ROOT);
+      }
+      pieceString += " ";
+      rowString += pieceString;
+    }
+    rowString += SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK;
+    rowString += " " + row + " ";
+    rowString +=  RESET_TEXT_COLOR + RESET_BG_COLOR + "%n";
+    return rowString;
   }
 }
