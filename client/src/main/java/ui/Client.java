@@ -31,7 +31,7 @@ public class Client {
 
   public void run(){
     System.out.println("Welcome to TerminalChess!  Login to start.");
-    System.out.println(this.help());
+    System.out.printf(this.help());
     while(state != State.QUIT){
       new Repl(this).run();
     }
