@@ -127,7 +127,7 @@ public class Client {
   }
 
   private String inGameEval(String cmd, String[] params) {
-    if(cmd == "leave"){
+    if(Objects.equals(cmd, "leave")){
       state = State.LOGGED_IN;
       return "You have left the game";
     }
@@ -386,6 +386,10 @@ public class Client {
       }
       String pieceString = "";
       ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+      if(!flipped){
+        int newcol = 9 - col;
+        piece = board.getPiece(new ChessPosition(row, newcol));
+      }
       ChessPiece.PieceType type = null;
       if(piece != null){
         type = piece.getPieceType();

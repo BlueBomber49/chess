@@ -3,12 +3,12 @@ import ui.*;
 
 public class ClientMain {
     public static void main(String[] args) throws Exception {
-        var piece = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
-        System.out.println("♕ 240 Chess Client: " + piece);
+        System.out.println("♕ 240 Chess Client: ");
         Client client = new Client("http://localhost:8080");
-        client.drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
         client.drawBoard(new ChessGame(), ChessGame.TeamColor.BLACK);
-        //client.run();
+        System.out.println();
+        client.drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
+        client.run();
 
     }
 }
