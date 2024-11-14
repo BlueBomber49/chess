@@ -8,6 +8,7 @@ import model.UserData;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import exception.AuthFailedException;
+import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,8 +22,8 @@ public class AuthServiceTests {
   public void setup() throws ResponseException {
     data = new MemoryDataAccess();
     service = new AuthService(data);
-    bob = new UserData("bob", "canwefixit", "yes@wecan");
-    felix = new UserData("felix", "icanfixit", "gonn@wreckit");
+    bob = new UserData("bob", BCrypt.hashpw("canwefixit", BCrypt.gensalt()), "yes@wecan");
+    felix = new UserData("felix", BCrypt.hashpw("canwefixit", BCrypt.gensalt()), "gonn@wreckit");
     auth = new AuthData("supahsecuretoken", "felix");
     data.addUser(bob);
     data.addAuth(auth);

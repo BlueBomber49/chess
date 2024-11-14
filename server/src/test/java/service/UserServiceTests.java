@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import exception.BadInputException;
 import exception.UsernameTakenException;
+import org.mindrot.jbcrypt.BCrypt;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -38,7 +39,7 @@ public class UserServiceTests {
   @Test
   public void registerSuccessfulTest() throws BadInputException, UsernameTakenException, ResponseException {
     AuthData id = service.registerUser(felix);
-    assertEquals(felix, data.getUser(felix.username()));
+    assertTrue(BCrypt.checkpw(felix.password(), data.getUser(felix.username()).password()));
     assertEquals(id, data.getAuth(id.authToken()));
   }
 }
