@@ -16,7 +16,8 @@ public class Repl {
       var input=scanner.nextLine();
       try {
         result = client.eval(input);
-        System.out.println(result);
+        System.out.printf(result);
+        System.out.println();
       }
       catch (Exception e) {
         System.out.println("Error: " + e.getMessage());

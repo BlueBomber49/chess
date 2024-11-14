@@ -1,8 +1,11 @@
 package ui;
 
+import chess.ChessGame;
 import exception.BadInputException;
 import exception.ResponseException;
+import responseclasses.GameResponse;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -11,6 +14,7 @@ public class Client {
   private String auth;
   private String currentUser;
   public State state;
+  private ArrayList<GameResponse> games;
   public Client(String url){
     facade = new ServerFacade(url);
     auth = null;
@@ -69,10 +73,22 @@ public class Client {
         return "quit";
       }
       case "register" -> {
-        return this.register(params);
+        var response=this.register(params);
+        try {
+          games=facade.listGames(auth);
+        }
+        catch(Exception ignored){
+        }
+        return response;
       }
       case "login" -> {
-        return this.login(params);
+        var response=this.login(params);
+        try {
+          games=facade.listGames(auth);
+        }
+        catch(Exception ignored){
+        }
+        return response;
       }
       default -> {
         return "Command not recognized.  Type 'help' for a list of commands";
@@ -183,13 +199,19 @@ public class Client {
 
   public String createGame(String[] params){
     try {
+      String name = "";
       if(params.length > 1){
-        return "The game's name cannot contain spaces, please try again";
+        for(String s : params){
+          name += s + " ";
+        }
+        name = name.substring(0, name.length()-1);
       }
       else if(params.length < 1){
         return "Please try again, and input a game name";
       }
-      var name=params[0];
+      else {
+        name=params[0];
+      }
       facade.createGame(auth, name);
       return "Game '" + name + "' created successfully!" ;
     }
@@ -200,8 +222,16 @@ public class Client {
 
   public String listGames(){
     try{
-      var gameList = facade.listGames(auth);
-      return null;
+      ArrayList<GameResponse> gameList = facade.listGames(auth);
+      var result = "";
+      games = gameList;
+      for(var i = 1; i <= gameList.size(); i ++){
+        var game = gameList.get(i-1);
+        var white = (game.whiteUsername() != null) ? game.whiteUsername(): "None";
+        var black = (game.blackUsername() != null) ? game.blackUsername(): "None";
+        result += i + ") " + game.gameName() + ", White player: " + white + ", Black player: " + black + "%n";
+      }
+      return result;
     }
     catch(Exception e){
       return "Error: " + e.getMessage();
@@ -209,7 +239,32 @@ public class Client {
   }
 
   public String joinGame(String[] params){
-    return null;
+    try{
+      if(params.length != 2){
+        return "Please use format 'join [ID] [WHITE|BLACK]'";
+      }
+      Integer id = Integer.valueOf(params[0]);
+      ChessGame.TeamColor color;
+      if(Objects.equals(params[1], "white")){
+        color = ChessGame.TeamColor.WHITE;
+      }
+      else if(Objects.equals(params[1], "black")){
+        color = ChessGame.TeamColor.BLACK;
+      }
+      else{
+        return "Please ensure that your color is either WHITE or BLACK";
+      }
+      id = games.get(id - 1).gameID();
+      facade.joinGame(auth, id, color);
+      this.state = State.PLAYING_GAME;
+    }
+    catch(NumberFormatException n){
+      return "Please ensure that ID is an integer";
+    }
+    catch(Exception e){
+      return "Error: " + e.getMessage();
+    }
+    return "Game joined";
   }
 
   public String observeGame(String[] params){
