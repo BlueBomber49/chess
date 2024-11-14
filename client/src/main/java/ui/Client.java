@@ -52,9 +52,6 @@ public class Client {
     if(Objects.equals(cmd, "help")){
       return this.help();
     }
-    else if(Objects.equals(cmd, "quit")){
-      return this.quit();
-    }
     else {
       switch (state) {
         case LOGGED_OUT -> {
@@ -64,12 +61,14 @@ public class Client {
           return loggedInEval(cmd, params);
         }
         case PLAYING_GAME -> {
-          return "Can't do this yet lol";
+          return inGameEval(cmd, params);
         }
         default -> {return "Broke";}
       }
     }
   }
+
+
 
   public String loggedOutEval(String cmd, String[] params){
     switch (cmd) {
@@ -127,6 +126,16 @@ public class Client {
     }
   }
 
+  private String inGameEval(String cmd, String[] params) {
+    if(cmd == "leave"){
+      state = State.LOGGED_IN;
+      return "You have left the game";
+    }
+    else{
+      return "Not implemented";
+    }
+  }
+
   public String help(){
     return switch(state){
       case LOGGED_OUT -> """
@@ -142,7 +151,6 @@ public class Client {
               create [game name]:  Creates a new game with the given name
               join [ID] [WHITE|BLACK]:  Joins the game as the chosen color
               observe [ID]:  Joins the game as an observer
-              quit:  Terminates the program
               """;
       case PLAYING_GAME -> "Phase 6 stuff";
       default -> "Something broke";
@@ -345,12 +353,12 @@ public class Client {
     ChessBoard board = game.getBoard();
     if(!flipped) {
       for (var row=1; row <= 8; row++) {
-        boardString += drawRow(board, row);
+        boardString += drawRow(board, row, flipped);
       }
     }
     else {
       for (var row=8; row >= 1; row--) {
-        boardString += drawRow(board, row);
+        boardString += drawRow(board, row, flipped);
       }
     }
     boardString += header;
@@ -358,17 +366,22 @@ public class Client {
     return boardString;
   }
 
-  public String drawRow(ChessBoard board, int row){
+  public String drawRow(ChessBoard board, int row, boolean flipped){
     String rowString = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + row + " ";
     rowString += SET_TEXT_COLOR_LIGHT_GREY;
+
+    var white_square_row = 0;
+    if(flipped){
+      white_square_row = 1;
+    }
     for(var col = 1; col <= 8; col ++){
-      if(row % 2 == 1 && col % 2 == 1){
+      if(row % 2 == white_square_row && col % 2 == 1){
         rowString += SET_BG_COLOR_BLACK;
       }
-      else if(row % 2 == 0 && col % 2 == 0){
+      else if(row % 2 != white_square_row && col % 2 == 0){
         rowString += SET_BG_COLOR_BLACK;
       }
-      else{
+      else {
         rowString += SET_BG_COLOR_WHITE;
       }
       String pieceString = "";
