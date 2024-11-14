@@ -323,7 +323,13 @@ public class Client {
       if (params.length != 1) {
         return "Please use format 'observe [ID]'";
       }
-      int id=Integer.parseInt(params[0]);
+      int id;
+      try {
+        id=Integer.parseInt(params[0]);
+      }
+      catch(Exception e){
+        return "Please use the format 'observe [ID]'.  (ID must be an integer)";
+      }
       if (id > games.size() || id < 1) {
         return "Invalid Game ID.  Use 'list' to get a list of games with their id's";
       }
@@ -370,15 +376,15 @@ public class Client {
     String rowString = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + row + " ";
     rowString += SET_TEXT_COLOR_LIGHT_GREY;
 
-    var white_square_row = 0;
+    var whiteSquareRow = 0;
     if(flipped){
-      white_square_row = 1;
+      whiteSquareRow = 1;
     }
     for(var col = 1; col <= 8; col ++){
-      if(row % 2 == white_square_row && col % 2 == 1){
+      if(row % 2 == whiteSquareRow && col % 2 == 1){
         rowString += SET_BG_COLOR_BLACK;
       }
-      else if(row % 2 != white_square_row && col % 2 == 0){
+      else if(row % 2 != whiteSquareRow && col % 2 == 0){
         rowString += SET_BG_COLOR_BLACK;
       }
       else {
