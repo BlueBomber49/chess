@@ -6,6 +6,7 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import exception.BadInputException;
 import exception.ResponseException;
+import model.AuthData;
 import responseclasses.GameResponse;
 
 import java.util.ArrayList;
@@ -161,7 +162,9 @@ public class Client {
       var username = params[0];
       var password = params[1];
       var email = params[2];
-      facade.register(username, password, email);
+      AuthData authData = facade.register(username, password, email);
+      auth = authData.authToken();
+      currentUser = authData.username();
       state = State.LOGGED_IN;
       return "Registration successful.  Welcome, " + username + "!";
     }
@@ -204,7 +207,7 @@ public class Client {
     }
     catch(Exception e) {
       if(e.getMessage().startsWith("failure: 401")){
-        return "Not logged in";
+        return "AuthToken not found.  This shouldn't happen";
       }
       return "Error: " + e.getMessage(); //Change at some point
     }
@@ -226,7 +229,7 @@ public class Client {
         name=params[0];
       }
       facade.createGame(auth, name);
-      facade.listGames(auth);
+      this.listGames();
       return "Game '" + name + "' created successfully!" ;
     }
     catch(Exception e) {

@@ -23,14 +23,12 @@ public class ServerFacade {
 
   public AuthData register(String username, String password, String email) throws ResponseException {
     var user = new UserData(username, password, email);
-    var auth = this.makeRequest("POST", "/user", user, AuthData.class, null);
-    return auth;
+    return this.makeRequest("POST", "/user", user, AuthData.class, null);
   }
 
   public AuthData login(String username, String password) throws ResponseException {
     var request = new LoginRequest(username, password);
-    var auth = this.makeRequest("POST", "/session", request, AuthData.class, null);
-    return auth;
+    return this.makeRequest("POST", "/session", request, AuthData.class, null);
   }
 
   public void logout(String auth) throws ResponseException {
