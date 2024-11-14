@@ -20,6 +20,7 @@ public class Client {
     auth = null;
     currentUser = null;
     state = State.LOGGED_OUT;
+    games = new ArrayList<>();
   }
 
   public void run(){
@@ -240,10 +241,19 @@ public class Client {
 
   public String joinGame(String[] params){
     try{
+      if(games.isEmpty()){
+        facade.listGames(auth);
+        if(games.isEmpty()){
+          return "No games currently exist.  Use 'create [gameName]' to start a new game";
+        }
+      }
       if(params.length != 2){
         return "Please use format 'join [ID] [WHITE|BLACK]'";
       }
       Integer id = Integer.valueOf(params[0]);
+      if(id >= games.size() || id < 1){
+        return "Invalid Game ID.  Use 'list' to get a list of games with their id's";
+      }
       ChessGame.TeamColor color;
       if(Objects.equals(params[1], "white")){
         color = ChessGame.TeamColor.WHITE;
@@ -261,14 +271,36 @@ public class Client {
     catch(NumberFormatException n){
       return "Please ensure that ID is an integer";
     }
-    catch(Exception e){
-      return "Error: " + e.getMessage();
+    catch(ResponseException e){
+      if(e.getMessage().startsWith("failure: 403")) {
+        return "Sorry, that color is taken";
+      }
+      else{
+        return "Error: " + e.errorCode() + " " + e.getMessage();
+      }
     }
     return "Game joined";
   }
 
-  public String observeGame(String[] params){
-    return null;
+  public String observeGame(String[] params) {
+    try {
+      if (games.isEmpty()) {
+        facade.listGames(auth);
+        if (games.isEmpty()) {
+          return "No games currently exist.  Use 'create [gameName]' to start a new game";
+        }
+      }
+      if (params.length != 1) {
+        return "Please use format 'observe [ID]'";
+      }
+      int id=Integer.parseInt(params[0]);
+      if (id >= games.size() || id < 1) {
+        return "Invalid Game ID.  Use 'list' to get a list of games with their id's";
+      }
+      this.state = State.PLAYING_GAME;
+    } catch (Exception e) {
+      return "Error: " + e.getMessage();
+    }
+    return "Observing game";
   }
-
 }
