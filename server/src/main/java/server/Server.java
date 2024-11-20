@@ -6,6 +6,7 @@ import exception.*;
 import model.*;
 import requestclasses.*;
 import responseclasses.*;
+import server.websocket.WebsocketHandler;
 import service.*;
 import spark.*;
 
@@ -40,6 +41,7 @@ public class Server {
         Spark.staticFiles.location("web");
 
         // Register your endpoints and handle exceptions here.
+        Spark.webSocket("/ws", WebsocketHandler.class);
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
