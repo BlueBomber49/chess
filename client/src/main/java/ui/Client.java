@@ -1,12 +1,12 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 import exception.ResponseException;
+import messages.ServerMessage;
 import model.AuthData;
 import responseclasses.GameResponse;
+import websocket.NotificationHandler;
+import websocket.WebsocketFacade;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,18 +15,21 @@ import java.util.Objects;
 
 import static ui.EscapeSequences.*;
 
-public class Client {
+public class Client implements NotificationHandler {
   private ServerFacade facade;
   private String auth;
   private String currentUser;
   public State state;
   private ArrayList<GameResponse> games;
+  private WebsocketFacade ws;
+  private String url;
   public Client(String url){
     facade = new ServerFacade(url);
     auth = null;
     currentUser = null;
     state = State.LOGGED_OUT;
     games = new ArrayList<>();
+    this.url = url;
   }
 
   public void run(){
@@ -302,6 +305,7 @@ public class Client {
         return "Please ensure that your color is either WHITE or BLACK";
       }
       id = games.get(id - 1).gameID();
+      ws = new WebsocketFacade(url, this);
       facade.joinGame(auth, id, color);
       this.state = State.PLAYING_GAME;
     }
@@ -432,5 +436,10 @@ public class Client {
     rowString += " " + row + " ";
     rowString +=  RESET_TEXT_COLOR + RESET_BG_COLOR + "%n";
     return rowString;
+  }
+
+  @Override
+  public void notify(ServerMessage message) {
+    System.out.println(message);
   }
 }

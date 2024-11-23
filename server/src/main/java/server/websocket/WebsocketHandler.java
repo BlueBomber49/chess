@@ -8,10 +8,10 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 public class WebsocketHandler {
 
   @OnWebSocketMessage
-  public void messageHandler(String message, Session session) {
+  public void messageHandler(Session session, String message) {
     try {
-      session.getRemote().sendString("Message received on server");
-      System.out.println("Handled websocket message");
+      session.getRemote().sendString("Message received on server: " + message);
+      System.out.println("Handled websocket message:" + message);
     }
     catch(Exception e){
       System.out.println("Error:" + e.getMessage());
