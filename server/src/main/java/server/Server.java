@@ -42,6 +42,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
         Spark.webSocket("/ws", WebsocketHandler.class);
+
         Spark.delete("/db", this::clear);
         Spark.post("/user", this::register);
         Spark.post("/session", this::login);
@@ -49,8 +50,6 @@ public class Server {
         Spark.get("/game", this::listGames);
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
-
-
         Spark.awaitInitialization();
         desiredPort = Spark.port();
         System.out.printf("Listening on port %d%n", desiredPort);
@@ -75,7 +74,7 @@ public class Server {
         }
     }
 
-    public Object register(Request req, Response res){
+    public Object register(Request req, Response res) {
         var person = serializer.fromJson(req.body(), UserData.class);
         AuthData token;
         String message;
@@ -100,7 +99,7 @@ public class Server {
 
     }
 
-    public Object login(Request req, Response res){
+    public Object login(Request req, Response res) {
         var body = serializer.fromJson(req.body(), LoginRequest.class);
         var username = body.username();
         var password = body.password();
@@ -139,7 +138,7 @@ public class Server {
         return "";
     }
 
-    public Object listGames(Request req, Response res){
+    public Object listGames(Request req, Response res) {
         var token = req.headers("Authorization");
         String message;
         try {
@@ -164,7 +163,7 @@ public class Server {
         }
     }
 
-    public Object createGame(Request req, Response res) throws AuthFailedException{
+    public Object createGame(Request req, Response res) {
         var token = req.headers("Authorization");
         var name = serializer.fromJson(req.body(), CreateGameRequest.class);
         String message;
@@ -185,7 +184,7 @@ public class Server {
         }
     }
 
-    public Object joinGame(Request req, Response res) throws AuthFailedException{
+    public Object joinGame(Request req, Response res) {
         var token = req.headers("Authorization");
         var joinRequest = serializer.fromJson(req.body(), JoinGameRequest.class);
         try {

@@ -4,7 +4,6 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
-import exception.BadInputException;
 import exception.ResponseException;
 import model.AuthData;
 import responseclasses.GameResponse;
@@ -68,8 +67,6 @@ public class Client {
     }
   }
 
-
-
   public String loggedOutEval(String cmd, String[] params){
     switch (cmd) {
       case "help" -> {
@@ -127,12 +124,18 @@ public class Client {
   }
 
   private String inGameEval(String cmd, String[] params) {
-    if(Objects.equals(cmd, "leave")){
-      state = State.LOGGED_IN;
-      return "You have left the game";
-    }
-    else{
-      return "Not implemented";
+    switch(cmd) {
+      case "leave" -> {
+        state = State.LOGGED_IN;
+        return "You have left the game";
+      }
+      case "redraw" -> {
+        return "Chessboard goes here";
+        //drawBoard();
+      }
+      default -> {
+        return "Not implemented";
+      }
     }
   }
 
@@ -152,7 +155,14 @@ public class Client {
               join [ID] [WHITE|BLACK]:  Joins the game as the chosen color
               observe [ID]:  Joins the game as an observer
               """;
-      case PLAYING_GAME -> "Phase 6 stuff";
+      case PLAYING_GAME -> """
+              %nhelp:  Gets a list of available commands
+              resign:  Admit defeat, ending the current game
+              leave:  Leaves the current game
+              redraw:  Redraws the chess board
+              highlight [column & row]:  Highlights squares that the selected piece can move to
+              move [starting column & row] [ending column & row]:  Moves the piece from the starting position to the end position
+              """;
       default -> "Something broke";
     };
   }
@@ -180,7 +190,7 @@ public class Client {
       if(e.getClass() == ResponseException.class){
         return "That username is taken.  Please select a different username";
       }
-      return "Error: " + e.getMessage(); //Change this?
+      return "Error: " + e.getMessage();
     }
   }
 
@@ -342,6 +352,7 @@ public class Client {
     drawBoard(new ChessGame(), ChessGame.TeamColor.BLACK);
     return "";
   }
+
   public String drawBoard(ChessGame game, ChessGame.TeamColor perspective){
     boolean flipped;
     String header;
