@@ -62,7 +62,7 @@ public class Client implements NotificationHandler {
         case LOGGED_IN -> {
           return loggedInEval(cmd, params);
         }
-        case PLAYING_GAME -> {
+        case PLAYING_GAME, OBSERVING_GAME -> {
           return inGameEval(cmd, params);
         }
         default -> {return "Broke";}
@@ -136,6 +136,15 @@ public class Client implements NotificationHandler {
         return "Chessboard goes here";
         //drawBoard();
       }
+      case "resign" -> {
+        return "You have resigned (not)";
+      }
+      case "highlight" -> {
+        return "I would love to highlight the board right now";
+      }
+      case "move" -> {
+        return "Bruh there's not even a board";
+      }
       default -> {
         return "Not implemented";
       }
@@ -165,6 +174,12 @@ public class Client implements NotificationHandler {
               redraw:  Redraws the chess board
               highlight [column & row]:  Highlights squares that the selected piece can move to
               move [starting column & row] [ending column & row]:  Moves the piece from the starting position to the end position
+              """;
+      case OBSERVING_GAME -> """
+              %nhelp:  Gets a list of available commands
+              leave:  Leaves the current game
+              redraw:  Redraws the chess board
+              highlight [column & row]:  Highlights squares that the selected piece can move to
               """;
       default -> "Something broke";
     };
@@ -347,13 +362,13 @@ public class Client implements NotificationHandler {
       if (id > games.size() || id < 1) {
         return "Invalid Game ID.  Use 'list' to get a list of games with their id's";
       }
-      this.state = State.PLAYING_GAME;
+      ws = new WebsocketFacade(url, this);
+      this.state = State.OBSERVING_GAME;
     } catch (Exception e) {
       return "Error: " + e.getMessage();
     }
     drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
     System.out.println();
-    drawBoard(new ChessGame(), ChessGame.TeamColor.BLACK);
     return "";
   }
 

@@ -1,0 +1,43 @@
+package server.websocket;
+
+import messages.ServerMessage;
+import org.eclipse.jetty.websocket.api.Session;
+
+import java.util.ArrayList;
+import java.util.concurrent.ConcurrentHashMap;
+
+public class ConnectionManager {
+
+  // A new connection Manager is needed for each chess game
+  public final ConcurrentHashMap<String, Connection> connections;
+
+  public ConnectionManager(){
+    connections = new ConcurrentHashMap<>();
+  }
+
+  public void add(String name, Session session){
+    Connection c = new Connection(session, name);
+    connections.put(name, c);
+  }
+
+  public void remove(String name){
+    connections.remove(name);
+  }
+
+  public void broadcast(String excludedUser, ServerMessage message){
+    var removeList = new ArrayList<Connection>();
+    for(var connection : connections.values()){
+      if(connection.session.isOpen()){
+        if(connection.user != excludedUser){
+          connection.send(message);
+        }
+      }
+      else{
+        removeList.add(connection);
+      }
+    }
+    for(var connection : removeList){
+      connections.remove(connection.user);
+    }
+  }
+}
