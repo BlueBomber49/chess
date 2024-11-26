@@ -30,7 +30,7 @@ public class ConnectionManager {
     for(var connection : connections.values()){
       if(connection.session.isOpen()){
         if(connection.user != excludedUser){
-          connection.send(message.toString());
+          connection.send(message);
         }
       }
       else{

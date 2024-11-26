@@ -1,6 +1,8 @@
 package websocket;
 
 import com.google.gson.Gson;
+import exception.ResponseException;
+import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
@@ -39,5 +41,15 @@ public class WebsocketFacade extends Endpoint {
     System.out.println("WS connection established");
   }
 
+  public void joinGame(String auth, Integer gameID) throws ResponseException {
+    try {
+      UserGameCommand command=new UserGameCommand(UserGameCommand.CommandType.CONNECT, auth, gameID);
+      this.session.getBasicRemote().sendText(new Gson().toJson(command));
+    }
+    catch(Exception e){
+      throw new ResponseException(500, e.getMessage());
+    }
+
+  }
 
 }

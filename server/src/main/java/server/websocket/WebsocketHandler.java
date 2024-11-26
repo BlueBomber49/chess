@@ -2,9 +2,6 @@ package server.websocket;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
-import dataaccess.SQLDataAccess;
-import service.GameService;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 import org.eclipse.jetty.websocket.api.Session;
@@ -37,8 +34,8 @@ public class WebsocketHandler {
         joinGame(gameID, user, session);
       }
 
-      session.getRemote().sendString("Message received on server: " + message);
-      System.out.println("Handled websocket message:" + message);
+      //session.getRemote().sendString("Message received on server: " + message);
+      //System.out.println("Handled websocket message:" + message);
     }
     catch(Exception e){
       System.out.println("Error:" + e.getMessage());

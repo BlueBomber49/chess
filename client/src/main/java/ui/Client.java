@@ -320,8 +320,9 @@ public class Client implements NotificationHandler {
         return "Please ensure that your color is either WHITE or BLACK";
       }
       id = games.get(id - 1).gameID();
-      ws = new WebsocketFacade(url, this);
       facade.joinGame(auth, id, color);
+      ws = new WebsocketFacade(url, this);
+      ws.joinGame(auth, id);
       this.state = State.PLAYING_GAME;
     }
     catch(NumberFormatException n){
@@ -335,9 +336,6 @@ public class Client implements NotificationHandler {
         return "Error: " + e.errorCode() + " " + e.getMessage();
       }
     }
-    drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
-    System.out.println();
-    drawBoard(new ChessGame(), ChessGame.TeamColor.BLACK);
     return "";
   }
 
@@ -367,8 +365,6 @@ public class Client implements NotificationHandler {
     } catch (Exception e) {
       return "Error: " + e.getMessage();
     }
-    drawBoard(new ChessGame(), ChessGame.TeamColor.WHITE);
-    System.out.println();
     return "";
   }
 
