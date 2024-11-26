@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 import static websocket.messages.ServerMessage.ServerMessageType.*;
 
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+
 public class WebSocketTests {
     private static WebsocketTestingEnvironment environment;
     private static TestServerFacade serverFacade;

@@ -20,6 +20,7 @@ public class Server {
     private UserService user;
     private DataAccess data;
     private Gson serializer = new Gson();
+    private WebsocketHandler ws;
 
     public Server() {
         try {
@@ -29,6 +30,7 @@ public class Server {
             data = new MemoryDataAccess();
             System.out.println("Alert: Database connection failed.  Storing in memory");
         }
+        this.ws = new WebsocketHandler(data);
         this.admin = new AdminService(data);
         this.auth = new AuthService(data);
         this.game = new GameService(data);

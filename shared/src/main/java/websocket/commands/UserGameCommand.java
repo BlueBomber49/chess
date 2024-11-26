@@ -1,4 +1,4 @@
-package commands;
+package websocket.commands;
 
 import java.util.Objects;
 
@@ -15,6 +15,7 @@ public class UserGameCommand {
     private final String authToken;
 
     private final Integer gameID;
+
 
     public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
         this.commandType = commandType;
