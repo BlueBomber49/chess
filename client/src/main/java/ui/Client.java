@@ -23,6 +23,7 @@ public class Client implements NotificationHandler {
   private ArrayList<GameResponse> games;
   private WebsocketFacade ws;
   private String url;
+  private ChessGame.TeamColor color;
   public Client(String url){
     facade = new ServerFacade(url);
     auth = null;
@@ -30,6 +31,7 @@ public class Client implements NotificationHandler {
     state = State.LOGGED_OUT;
     games = new ArrayList<>();
     this.url = url;
+    this.color = ChessGame.TeamColor.WHITE;
   }
 
   public void run(){
@@ -324,6 +326,7 @@ public class Client implements NotificationHandler {
       ws = new WebsocketFacade(url, this);
       ws.joinGame(auth, id);
       this.state = State.PLAYING_GAME;
+      this.color = color;
     }
     catch(NumberFormatException n){
       return "Please ensure that ID is an integer";
@@ -451,6 +454,19 @@ public class Client implements NotificationHandler {
 
   @Override
   public void notify(ServerMessage message) {
-    System.out.println(message);
+    ServerMessage.ServerMessageType type = message.getServerMessageType();
+    switch(type) {
+      case LOAD_GAME -> {
+        ChessGame game = message.getGame();
+        drawBoard(game, color);
+      }
+      case NOTIFICATION -> {
+        System.out.println("Notification: " + message);
+      }
+      case ERROR -> {
+        System.out.println("Error: " + message);
+      }
+    }
+
   }
 }

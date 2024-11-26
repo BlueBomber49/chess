@@ -2,6 +2,7 @@ package server.websocket;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
+import exception.ResponseException;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 import org.eclipse.jetty.websocket.api.Session;
@@ -9,6 +10,7 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import java.io.IOException;
+import java.rmi.RemoteException;
 import java.util.concurrent.ConcurrentHashMap;
 
 @WebSocket
@@ -34,24 +36,27 @@ public class WebsocketHandler {
         joinGame(gameID, user, session);
       }
 
-      //session.getRemote().sendString("Message received on server: " + message);
-      //System.out.println("Handled websocket message:" + message);
     }
     catch(Exception e){
       System.out.println("Error:" + e.getMessage());
     }
   }
 
-  public void joinGame(Integer gameID, String user, Session session) throws IOException {
-    if (!gameList.containsKey(gameID)) {
-      gameList.put(gameID, new ConnectionManager());
-    }
-    ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has joined the game!");
-    gameList.get(gameID).add(user, session);
-    gameList.get(gameID).broadcast(user, message);
+  public void joinGame(Integer gameID, String user, Session session) throws ResponseException {
+    try {
+      if (!gameList.containsKey(gameID)) {
+        gameList.put(gameID, new ConnectionManager());
+      }
+      ServerMessage message=new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has joined the game!");
+      gameList.get(gameID).add(user, session);
+      gameList.get(gameID).broadcast(user, message);
 
-    ServerMessage loadMessage = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME);
-    gameList.get(gameID).broadcast("", loadMessage);
+      ServerMessage loadMessage=new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, data.getGame(gameID).game());
+      gameList.get(gameID).send(user, loadMessage);
+    }
+    catch(Exception e){
+      throw new ResponseException(500, e.getMessage());
+    }
   }
 
   public void leaveGame(Integer gameID, String user){
