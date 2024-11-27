@@ -12,6 +12,7 @@ import java.util.Objects;
  */
 public class ServerMessage {
     ServerMessageType serverMessageType;
+    String errorMessage;
     String message;
     ChessGame game;
 
@@ -28,6 +29,12 @@ public class ServerMessage {
     public ServerMessage(ServerMessageType type, String message){
         this.serverMessageType = type;
         this.message = message;
+    }
+
+    public ServerMessage(ServerMessageType type, String message, String errorMessage){
+        this.serverMessageType = type;
+        this.message = null;
+        this.errorMessage = errorMessage;
     }
 
     public ServerMessage(ServerMessageType type, ChessGame game){

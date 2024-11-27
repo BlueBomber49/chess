@@ -36,6 +36,11 @@ public class WebsocketHandler {
       String token = command.getAuthToken();
       Integer gameID = command.getGameID();
       UserGameCommand.CommandType commandType = command.getCommandType();
+      if(data.getAuth(token) == null){
+        ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: Invalid authtoken");
+        session.getRemote().sendString(new Gson().toJson(errorMessage));
+        return;
+      }
       String user = data.getAuth(token).username();
       switch(commandType){
         case CONNECT -> {
@@ -65,15 +70,22 @@ public class WebsocketHandler {
 
   public void joinGame(Integer gameID, String user, Session session) throws ResponseException {
     try {
-      if (!gameList.containsKey(gameID)) {
-        gameList.put(gameID, new ConnectionManager());
+      GameData game=data.getGame(gameID);
+      if (game == null) {
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: Invalid game ID");
+        session.getRemote().sendString(new Gson().toJson(message));
       }
-      ServerMessage message=new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has joined the game!");
-      gameList.get(gameID).add(user, session);
-      gameList.get(gameID).broadcast(user, message);
+      else {
+        if (!gameList.containsKey(gameID)) {
+          gameList.put(gameID, new ConnectionManager());
+        }
+        ServerMessage message=new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has joined the game!");
+        gameList.get(gameID).add(user, session);
+        gameList.get(gameID).broadcast(user, message);
 
-      ServerMessage loadMessage=new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, data.getGame(gameID).game());
-      gameList.get(gameID).send(user, loadMessage);
+        ServerMessage loadMessage=new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, data.getGame(gameID).game());
+        gameList.get(gameID).send(user, loadMessage);
+      }
     }
     catch(Exception e){
       throw new ResponseException(500, e.getMessage());
@@ -105,14 +117,18 @@ public class WebsocketHandler {
   public void resignGame(Integer gameID, String user) throws ResponseException{
     try {
       var game=data.getGame(gameID);
-      if (Objects.equals(game.blackUsername(), user) || Objects.equals(game.whiteUsername(), user)) {
+      if(game.game().isFinished){
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: You can't resign, because the game is already over"));
+      }
+      else if (Objects.equals(game.blackUsername(), user) || Objects.equals(game.whiteUsername(), user)) {
         ChessGame chessGame = game.game();
         chessGame.setTeamTurn(null);
         chessGame.finish();
+        data.updateGame(new GameData(game.gameId(), game.whiteUsername(), game.blackUsername(), game.gameName(), chessGame));
         String message = user + " has resigned";
         gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
       } else {
-        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Error: You can't resign, because you are an observer"));
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: You can't resign, because you are an observer"));
       }
     }
     catch (Exception e){
