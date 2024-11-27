@@ -1,5 +1,8 @@
 package server.websocket;
 
+import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import exception.ResponseException;
@@ -42,13 +45,13 @@ public class WebsocketHandler {
           leaveGame(gameID, user);
         }
         case RESIGN -> {
-
+          resignGame(gameID, user);
         }
         case MAKE_MOVE -> {
 
         }
         default -> {
-
+          System.out.println("Couldn't handle that message");
         }
       }
 
@@ -57,6 +60,8 @@ public class WebsocketHandler {
       System.out.println("Error:" + e.getMessage());
     }
   }
+
+
 
   public void joinGame(Integer gameID, String user, Session session) throws ResponseException {
     try {
@@ -91,6 +96,46 @@ public class WebsocketHandler {
       gameList.get(gameID).remove(user);
       ServerMessage leaveMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has left the game");
       gameList.get(gameID).broadcast(user, leaveMessage);
+    }
+    catch (Exception e){
+      throw new ResponseException(500, e.getMessage());
+    }
+  }
+
+  public void resignGame(Integer gameID, String user) throws ResponseException{
+    try {
+      var game=data.getGame(gameID);
+      if (Objects.equals(game.blackUsername(), user) || Objects.equals(game.whiteUsername(), user)) {
+        ChessGame chessGame = game.game();
+        chessGame.setTeamTurn(null);
+        chessGame.finish();
+        String message = user + " has resigned";
+        gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
+      } else {
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Error: You can't resign, because you are an observer"));
+      }
+    }
+    catch (Exception e){
+      throw new ResponseException(500, e.getMessage());
+    }
+  }
+
+  public void makeMove(Integer gameID, String user, ChessMove move) throws ResponseException {
+    try {
+      GameData gameData = data.getGame(gameID);
+      ChessGame game=gameData.game();
+      ChessPosition startPos=move.getStartPosition();
+      if (game.validMoves(startPos).contains(move)) {
+        game.makeMove(move);
+        GameData updatedGame = new GameData(gameData.gameId(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
+        data.updateGame(updatedGame);
+        gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
+        String message = user + " moved " + move.getStartPosition().toString() + "to " + move.getEndPosition().toString();
+        gameList.get(gameID).broadcast(user, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
+
+      } else {
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Error: Illegal move"));
+      }
     }
     catch (Exception e){
       throw new ResponseException(500, e.getMessage());

@@ -18,11 +18,13 @@ public class ChessGame {
     private TeamColor currentTurn;
     private boolean whiteCanCastle;
     private boolean blackCanCastle;
+    public boolean isFinished;
 
     public ChessGame() {
         gameBoard = new ChessBoard();
         gameBoard.resetBoard();
         currentTurn = TeamColor.WHITE;
+        isFinished = false;
         whiteCanCastle = true;
         blackCanCastle = true;
     }
@@ -33,6 +35,10 @@ public class ChessGame {
     public TeamColor getTeamTurn() {
         return currentTurn;
     }
+
+    public boolean isFinished(){return isFinished;}
+
+    public void finish(){isFinished = true;}
 
     /**
      * Set's which teams turn it is
@@ -175,7 +181,11 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        return !checkForValidMoves(teamColor) && isInCheck(teamColor);
+        if(!checkForValidMoves(teamColor) && isInCheck(teamColor)){
+            finish();
+            return true;
+        }
+        return false;
     }
 
     public boolean checkForValidMoves(TeamColor teamColor){
@@ -201,7 +211,11 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return !isInCheck(teamColor) && !checkForValidMoves(teamColor);
+        if(!checkForValidMoves(teamColor) && !isInCheck(teamColor)){
+            finish();
+            return true;
+        }
+        return false;
     }
 
     /**
