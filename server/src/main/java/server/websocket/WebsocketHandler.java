@@ -68,7 +68,7 @@ public class WebsocketHandler {
 
 
 
-  public void joinGame(Integer gameID, String user, Session session) throws ResponseException {
+  public void joinGame(Integer gameID, String user, Session session) throws IOException {
     try {
       GameData game=data.getGame(gameID);
       if (game == null) {
@@ -88,11 +88,11 @@ public class WebsocketHandler {
       }
     }
     catch(Exception e){
-      throw new ResponseException(500, e.getMessage());
+      gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: " + e.getMessage()));
     }
   }
 
-  public void leaveGame(Integer gameID, String user) throws ResponseException {
+  public void leaveGame(Integer gameID, String user) throws IOException {
     try {
       GameData game = data.getGame(gameID);
       GameData newGame;
@@ -110,11 +110,11 @@ public class WebsocketHandler {
       gameList.get(gameID).broadcast(user, leaveMessage);
     }
     catch (Exception e){
-      throw new ResponseException(500, e.getMessage());
+      gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: " + e.getMessage()));
     }
   }
 
-  public void resignGame(Integer gameID, String user) throws ResponseException{
+  public void resignGame(Integer gameID, String user) throws IOException {
     try {
       var game=data.getGame(gameID);
       if(game.game().isFinished){
@@ -132,15 +132,16 @@ public class WebsocketHandler {
       }
     }
     catch (Exception e){
-      throw new ResponseException(500, e.getMessage());
+      gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: " + e.getMessage()));
     }
   }
 
-  public void makeMove(Integer gameID, String user, ChessMove move) throws ResponseException {
+  public void makeMove(Integer gameID, String user, ChessMove move) throws IOException {
     try {
       GameData gameData = data.getGame(gameID);
       ChessGame game=gameData.game();
       ChessGame.TeamColor playerColor;
+
       if(Objects.equals(user, gameData.whiteUsername())){
         playerColor = ChessGame.TeamColor.WHITE;
       } else if(Objects.equals(user, gameData.blackUsername())){
@@ -166,7 +167,7 @@ public class WebsocketHandler {
       }
     }
     catch (Exception e){
-      throw new ResponseException(500, e.getMessage());
+      gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: " + e.getMessage()));
     }
   }
 
