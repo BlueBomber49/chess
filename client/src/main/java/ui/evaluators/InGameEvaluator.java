@@ -20,7 +20,8 @@ public class InGameEvaluator {
   String auth;
   Integer currentGameID;
   State state;
-  public InGameEvaluator(String auth, Integer currentGameID, State state, ChessGame game, ChessGame.TeamColor color, Client client, WebsocketFacade ws){
+  public InGameEvaluator(String auth, Integer currentGameID, State state, ChessGame game,
+                         ChessGame.TeamColor color, Client client, WebsocketFacade ws){
     this.game = game;
     this.color = color;
     this.client = client;
