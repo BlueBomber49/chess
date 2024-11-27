@@ -134,6 +134,9 @@ public class ChessGame {
 
     public Collection<ChessMove> getAllTeamMoves(TeamColor color){
         ArrayList<ChessMove> teamMoves = new ArrayList<>();
+        if (isFinished){
+            return teamMoves;
+        }
         for(int row = 1; row < 9; row ++) {
             for(int col = 1; col < 9; col++){
                 ChessPosition pos = new ChessPosition(row, col);

@@ -53,13 +53,13 @@ public class WebsocketHandler {
           resignGame(gameID, user);
         }
         case MAKE_MOVE -> {
-
+          ChessMove move = command.getMove();
+          makeMove(gameID, user, move);
         }
         default -> {
           System.out.println("Couldn't handle that message");
         }
       }
-
     }
     catch(Exception e){
       System.out.println("Error:" + e.getMessage());
@@ -140,17 +140,29 @@ public class WebsocketHandler {
     try {
       GameData gameData = data.getGame(gameID);
       ChessGame game=gameData.game();
-      ChessPosition startPos=move.getStartPosition();
-      if (game.validMoves(startPos).contains(move)) {
+      ChessGame.TeamColor playerColor;
+      if(Objects.equals(user, gameData.whiteUsername())){
+        playerColor = ChessGame.TeamColor.WHITE;
+      } else if(Objects.equals(user, gameData.blackUsername())){
+        playerColor = ChessGame.TeamColor.BLACK;
+      }
+      else{
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: You are an observer, and can't make moves"));
+        return;
+      }
+      if(game.getTeamTurn() != playerColor){
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: It is not your turn"));
+        return;
+      }
+      if (game.getAllTeamMoves(playerColor).contains(move)) {
         game.makeMove(move);
         GameData updatedGame = new GameData(gameData.gameId(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
         data.updateGame(updatedGame);
         gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
         String message = user + " moved " + move.getStartPosition().toString() + "to " + move.getEndPosition().toString();
         gameList.get(gameID).broadcast(user, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
-
       } else {
-        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "Error: Illegal move"));
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: Illegal move"));
       }
     }
     catch (Exception e){

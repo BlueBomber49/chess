@@ -54,6 +54,10 @@ public class ServerMessage {
         return message;
     }
 
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
