@@ -3,6 +3,7 @@ package server.websocket;
 import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import exception.ResponseException;
+import model.GameData;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 import org.eclipse.jetty.websocket.api.Session;
@@ -32,8 +33,22 @@ public class WebsocketHandler {
       Integer gameID = command.getGameID();
       UserGameCommand.CommandType commandType = command.getCommandType();
       String user = data.getAuth(token).username();
-      if(commandType == UserGameCommand.CommandType.CONNECT){
-        joinGame(gameID, user, session);
+      switch(commandType){
+        case CONNECT -> {
+          joinGame(gameID, user, session);
+        }
+        case LEAVE -> {
+          leaveGame(gameID, user);
+        }
+        case RESIGN -> {
+
+        }
+        case MAKE_MOVE -> {
+
+        }
+        default -> {
+
+        }
       }
 
     }
@@ -59,8 +74,24 @@ public class WebsocketHandler {
     }
   }
 
-  public void leaveGame(Integer gameID, String user){
-    gameList.get(gameID).remove(user);
+  public void leaveGame(Integer gameID, String user) throws ResponseException {
+    try {
+      GameData game = data.getGame(gameID);
+      GameData newGame;
+      if(game.whiteUsername() == user){
+        newGame=new GameData(gameID, null, game.blackUsername(), game.gameName(), game.game());
+      }
+      else{
+        newGame=new GameData(gameID, game.whiteUsername(), null, game.gameName(), game.game());
+      }
+      data.updateGame(newGame);
+      gameList.get(gameID).remove(user);
+      ServerMessage leaveMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has left the game");
+      gameList.get(gameID).broadcast(user, leaveMessage);
+    }
+    catch (Exception e){
+      throw new ResponseException(500, e.getMessage());
+    }
   }
 
 }

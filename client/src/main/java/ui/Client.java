@@ -18,16 +18,15 @@ import static ui.EscapeSequences.*;
 public class Client implements NotificationHandler {
   private ServerFacade facade;
   private String auth;
-  private String currentUser;
   public State state;
   private ArrayList<GameResponse> games;
   private WebsocketFacade ws;
   private String url;
   private ChessGame.TeamColor color;
+  private Integer currentGameID;
   public Client(String url){
     facade = new ServerFacade(url);
     auth = null;
-    currentUser = null;
     state = State.LOGGED_OUT;
     games = new ArrayList<>();
     this.url = url;
@@ -202,7 +201,6 @@ public class Client implements NotificationHandler {
       var email = params[2];
       AuthData authData = facade.register(username, password, email);
       auth = authData.authToken();
-      currentUser = authData.username();
       state = State.LOGGED_IN;
       return "Registration successful.  Welcome, " + username + "!";
     }
@@ -223,7 +221,6 @@ public class Client implements NotificationHandler {
       var password = params[1];
       var authData = facade.login(username, password);
       auth = authData.authToken();
-      currentUser = authData.username();
       state = State.LOGGED_IN;
       return "Login successful.  Welcome, " + username + "!";
     }
@@ -239,7 +236,6 @@ public class Client implements NotificationHandler {
     try {
       facade.logout(auth);
       auth = null;
-      currentUser = null;
       state = State.LOGGED_OUT;
       return "Logged out.  See ya later!";
     }
@@ -327,6 +323,7 @@ public class Client implements NotificationHandler {
       ws.joinGame(auth, id);
       this.state = State.PLAYING_GAME;
       this.color = color;
+      this.currentGameID = id;
     }
     catch(NumberFormatException n){
       return "Please ensure that ID is an integer";
@@ -369,6 +366,17 @@ public class Client implements NotificationHandler {
       return "Error: " + e.getMessage();
     }
     return "";
+  }
+
+  public String leaveGame(){
+    try {
+      state=State.LOGGED_IN;
+      ws.leaveGame(auth, currentGameID);
+      return "You have left the game";
+    }
+    catch (Exception e){
+      return "Error: " + e.getMessage();
+    }
   }
 
   public String drawBoard(ChessGame game, ChessGame.TeamColor perspective){
