@@ -118,7 +118,8 @@ public class WebsocketHandler {
     try {
       var game=data.getGame(gameID);
       if(game.game().isFinished){
-        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: You can't resign, because the game is already over"));
+        String message = "Error: You can't resign, because the game is already over";
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", message));
       }
       else if (Objects.equals(game.blackUsername(), user) || Objects.equals(game.whiteUsername(), user)) {
         ChessGame chessGame = game.game();
@@ -128,7 +129,8 @@ public class WebsocketHandler {
         String message = user + " has resigned";
         gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
       } else {
-        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: You can't resign, because you are an observer"));
+        String message = "Error: You can't resign, because you are an observer";
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", message));
       }
     }
     catch (Exception e){
@@ -148,7 +150,8 @@ public class WebsocketHandler {
         playerColor = ChessGame.TeamColor.BLACK;
       }
       else{
-        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: You are an observer, and can't make moves"));
+        String message = "Error: You are an observer, and can't make moves";
+        gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", message));
         return;
       }
       if(game.getTeamTurn() != playerColor){

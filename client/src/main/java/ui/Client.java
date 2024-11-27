@@ -2,6 +2,8 @@ package ui;
 
 import chess.*;
 import exception.ResponseException;
+import ui.evaluators.LoggedInEvaluator;
+import ui.evaluators.LoggedOutEvaluator;
 import websocket.messages.ServerMessage;
 import model.AuthData;
 import responseclasses.GameResponse;
@@ -21,12 +23,14 @@ public class Client implements NotificationHandler {
   private String url;
   private ChessGame.TeamColor color;
   private Integer currentGameID;
+  private LoggedOutEvaluator loggedOutEvaluator;
   public Client(String url){
     facade = new ServerFacade(url);
     state = State.LOGGED_OUT;
     games = new ArrayList<>();
     this.url = url;
     this.color = ChessGame.TeamColor.WHITE;
+    this.loggedOutEvaluator = new LoggedOutEvaluator(facade, games, state);
   }
 
   public void run(){
@@ -54,48 +58,27 @@ public class Client implements NotificationHandler {
     else {
       switch (state) {
         case LOGGED_OUT -> {
-          return loggedOutEval(cmd, params);
+          String returnString = loggedOutEvaluator.eval(cmd, params);
+          state = loggedOutEvaluator.getState();
+          auth = loggedOutEvaluator.getAuth();
+          games = loggedOutEvaluator.getGames();
+          return returnString;
         }
         case LOGGED_IN -> {
-          return loggedInEval(cmd, params);
+          LoggedInEvaluator loggedInEvaluator = new LoggedInEvaluator(facade, games, state, url, auth, this);
+          String returnString = loggedInEvaluator.eval(cmd, params);
+          facade = loggedInEvaluator.getFacade();
+          state = loggedInEvaluator.getState();
+          auth = loggedInEvaluator.getAuth();
+          games = loggedInEvaluator.getGames();
+          url = loggedInEvaluator.getUrl();
+          ws = loggedInEvaluator.getWs();
+          return returnString;
         }
         case PLAYING_GAME, OBSERVING_GAME -> {
           return inGameEval(cmd, params);
         }
         default -> {return "Broke";}
-      }
-    }
-  }
-
-  public String loggedOutEval(String cmd, String[] params){
-    switch (cmd) {
-      case "help" -> {
-        return this.help();
-      }
-      case "quit" -> {
-        this.quit();
-        return "quit";
-      }
-      case "register" -> {
-        var response=this.register(params);
-        try {
-          games=facade.listGames(auth);
-        }
-        catch(Exception ignored){
-        }
-        return response;
-      }
-      case "login" -> {
-        var response=this.login(params);
-        try {
-          games=facade.listGames(auth);
-        }
-        catch(Exception ignored){
-        }
-        return response;
-      }
-      default -> {
-        return "Command not recognized.  Type 'help' for a list of commands";
       }
     }
   }
@@ -179,52 +162,6 @@ public class Client implements NotificationHandler {
               """;
       default -> "Something broke";
     };
-  }
-
-  public String quit(){
-    state = State.QUIT;
-    return "quit";
-  }
-
-  public String register(String[] params){
-    try{
-      if(params.length != 3){
-        return "Incorrect register format.  Please use the format 'register [username] [password] [email]'";
-      }
-      var username = params[0];
-      var password = params[1];
-      var email = params[2];
-      AuthData authData = facade.register(username, password, email);
-      auth = authData.authToken();
-      state = State.LOGGED_IN;
-      return "Registration successful.  Welcome, " + username + "!";
-    }
-    catch (Exception e){
-      if(e.getClass() == ResponseException.class){
-        return "That username is taken.  Please select a different username";
-      }
-      return "Error: " + e.getMessage();
-    }
-  }
-
-  public String login(String[] params ){
-    try {
-      if(params.length != 2){
-        return "Incorrect login format.  Please use the format 'login [username] [password] ";
-      }
-      var username = params[0];
-      var password = params[1];
-      var authData = facade.login(username, password);
-      auth = authData.authToken();
-      state = State.LOGGED_IN;
-      return "Login successful.  Welcome, " + username + "!";
-    }
-    catch(Exception e){
-      if(e.getMessage().startsWith("failure: 401")){
-        return "Username or password incorrect";
-      }
-      return "Error: " + e.getMessage(); //Change this at some point
-    }
   }
 
   public String logout(){
