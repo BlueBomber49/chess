@@ -130,8 +130,7 @@ public class Client implements NotificationHandler {
   private String inGameEval(String cmd, String[] params) {
     switch(cmd) {
       case "leave" -> {
-        state = State.LOGGED_IN;
-        return "You have left the game";
+        return leaveGame();
       }
       case "redraw" -> {
         return "Chessboard goes here";
@@ -384,15 +383,15 @@ public class Client implements NotificationHandler {
     String header;
     if(perspective == ChessGame.TeamColor.WHITE){
       flipped = true;
-      header = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
+      header =  SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
               "    a  b  c  d  e  f  g  h    " + RESET_BG_COLOR + RESET_TEXT_COLOR + "%n";
     }
     else{
       flipped = false;
-      header = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
+      header =  SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
               "    h  g  f  e  d  c  b  a    " + RESET_BG_COLOR + RESET_TEXT_COLOR + "%n";
     }
-    String boardString = header;
+    String boardString = "%n" + header;
     ChessBoard board = game.getBoard();
     if(!flipped) {
       for (var row=1; row <= 8; row++) {
@@ -404,7 +403,7 @@ public class Client implements NotificationHandler {
         boardString += drawRow(board, row, flipped);
       }
     }
-    boardString += header;
+    boardString += header + "%n";
     System.out.printf(boardString);
     return boardString;
   }

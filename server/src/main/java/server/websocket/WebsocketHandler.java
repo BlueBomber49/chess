@@ -12,6 +12,7 @@ import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 @WebSocket
@@ -78,13 +79,15 @@ public class WebsocketHandler {
     try {
       GameData game = data.getGame(gameID);
       GameData newGame;
-      if(game.whiteUsername() == user){
+      if(Objects.equals(game.whiteUsername(), user)){
         newGame=new GameData(gameID, null, game.blackUsername(), game.gameName(), game.game());
+        data.updateGame(newGame);
       }
-      else{
+      else if(Objects.equals(game.blackUsername(), user)){
         newGame=new GameData(gameID, game.whiteUsername(), null, game.gameName(), game.game());
+        data.updateGame(newGame);
       }
-      data.updateGame(newGame);
+      var x = data.getGame(gameID);
       gameList.get(gameID).remove(user);
       ServerMessage leaveMessage = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has left the game");
       gameList.get(gameID).broadcast(user, leaveMessage);
