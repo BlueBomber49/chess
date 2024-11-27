@@ -26,7 +26,6 @@ public class Client implements NotificationHandler {
   private Integer currentGameID;
   public Client(String url){
     facade = new ServerFacade(url);
-    auth = null;
     state = State.LOGGED_OUT;
     games = new ArrayList<>();
     this.url = url;
@@ -137,16 +136,16 @@ public class Client implements NotificationHandler {
         //drawBoard();
       }
       case "resign" -> {
-        return "You have resigned (not)";
+        return resignGame();
       }
       case "highlight" -> {
         return "I would love to highlight the board right now";
       }
       case "move" -> {
-        return "Bruh there's not even a board";
+        return makeMove(params);
       }
       default -> {
-        return "Not implemented";
+        return "Not a recognized command.  Type 'help' for a list of commands";
       }
     }
   }
@@ -378,6 +377,24 @@ public class Client implements NotificationHandler {
     }
   }
 
+  public String resignGame(){
+    try{
+      ws.resignGame(auth, currentGameID);
+    } catch (ResponseException e) {
+      return "Error: " + e.getMessage();
+    }
+    return "You have resigned";
+  }
+
+  public String makeMove(String[] params){
+    if(params.length != 2){
+      return "Please use format 'move [start column][start row] [end column][end row]";
+    }
+    String start = params[0];
+    String end = params[1];
+    return "I tried";
+  }
+
   public String drawBoard(ChessGame game, ChessGame.TeamColor perspective){
     boolean flipped;
     String header;
@@ -468,10 +485,10 @@ public class Client implements NotificationHandler {
         drawBoard(game, color);
       }
       case NOTIFICATION -> {
-        System.out.println("Notification: " + message);
+        System.out.println("Notification: " + message.getMessage());
       }
       case ERROR -> {
-        System.out.println("Error: " + message);
+        System.out.println("Error: " + message.getMessage());
       }
     }
 
