@@ -143,7 +143,7 @@ public class LoggedInEvaluator {
       id = games.get(id - 1).gameID();
       facade.joinGame(auth, id, color);
       ws = new WebsocketFacade(url, client);
-      ws.joinGame(auth, id);
+      ws.joinGame(auth, id, color);
       this.state = State.PLAYING_GAME;
       this.color = color;
       this.currentGameID = id;

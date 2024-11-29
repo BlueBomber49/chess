@@ -113,7 +113,8 @@ public class InGameEvaluator {
           }
         }
         move=new ChessMove(startPos, endPos, promotionPiece);
-      } else {
+      }
+      else {
         move=new ChessMove(startPos, endPos, null);
       }
       ws.makeMove(auth, currentGameID, move);

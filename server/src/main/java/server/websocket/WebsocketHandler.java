@@ -35,6 +35,7 @@ public class WebsocketHandler {
       UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
       String token = command.getAuthToken();
       Integer gameID = command.getGameID();
+      ChessGame.TeamColor color = command.getColor();
       UserGameCommand.CommandType commandType = command.getCommandType();
       if(data.getAuth(token) == null){
         ServerMessage errorMessage = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: Invalid authtoken");
@@ -44,7 +45,7 @@ public class WebsocketHandler {
       String user = data.getAuth(token).username();
       switch(commandType){
         case CONNECT -> {
-          joinGame(gameID, user, session);
+          joinGame(gameID, user, session, color);
         }
         case LEAVE -> {
           leaveGame(gameID, user);
@@ -68,9 +69,16 @@ public class WebsocketHandler {
 
 
 
-  public void joinGame(Integer gameID, String user, Session session) throws IOException {
+  public void joinGame(Integer gameID, String user, Session session, ChessGame.TeamColor color) throws IOException {
     try {
       GameData game=data.getGame(gameID);
+      String stringColor;
+      if(color == ChessGame.TeamColor.WHITE){
+        stringColor = "white";
+      }
+      else{
+        stringColor = "black";
+      }
       if (game == null) {
         ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: Invalid game ID");
         session.getRemote().sendString(new Gson().toJson(message));
@@ -79,7 +87,7 @@ public class WebsocketHandler {
         if (!gameList.containsKey(gameID)) {
           gameList.put(gameID, new ConnectionManager());
         }
-        ServerMessage message=new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has joined the game!");
+        ServerMessage message=new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has joined the game as " + stringColor);
         gameList.get(gameID).add(user, session);
         gameList.get(gameID).broadcast(user, message);
 

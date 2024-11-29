@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -38,7 +39,10 @@ public class ChessPosition { //COMPLETE
 
     @Override
     public String toString() {
-        return "ChessPosition:{" + row + ", " + col + '}';
+        var colMap=Map.of(1, "a", 2, "b", 3, "c", 4,
+                "d", 5, "e", 6, "f", 7, "g", 8, "h");
+        String sCol = colMap.get(col);
+        return sCol + row;
     }
 
     @Override
