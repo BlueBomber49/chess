@@ -75,6 +75,8 @@ public class Client implements NotificationHandler {
           games = loggedInEvaluator.getGames();
           url = loggedInEvaluator.getUrl();
           ws = loggedInEvaluator.getWs();
+          color = loggedInEvaluator.getColor();
+          currentGameID = loggedInEvaluator.getCurrentGameID();
           return returnString;
         }
         case PLAYING_GAME, OBSERVING_GAME -> {
@@ -153,7 +155,6 @@ public class Client implements NotificationHandler {
       }
     }
     boardString += header + "%n";
-    System.out.printf(boardString);
     return boardString;
   }
 
@@ -215,7 +216,7 @@ public class Client implements NotificationHandler {
       case LOAD_GAME -> {
         ChessGame game = message.getGame();
         this.game = game;
-        drawBoard(game, color);
+        System.out.printf(drawBoard(game, color));
       }
       case NOTIFICATION -> {
         System.out.println("Notification: " + message.getMessage());
