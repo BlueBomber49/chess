@@ -184,7 +184,9 @@ public class LoggedInEvaluator {
         return "Invalid Game ID.  Use 'list' to get a list of games with their id's";
       }
       ws = new WebsocketFacade(url, client);
+      ws.observeGame(auth, id);
       this.state = State.OBSERVING_GAME;
+      this.currentGameID = id;
     } catch (Exception e) {
       return "Error: " + e.getMessage();
     }

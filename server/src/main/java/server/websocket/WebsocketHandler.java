@@ -100,6 +100,30 @@ public class WebsocketHandler {
     }
   }
 
+  public void observeGame(Integer gameID, String user, Session session) throws IOException {
+    try{
+      GameData game=data.getGame(gameID);
+      if (game == null) {
+        ServerMessage message = new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: Invalid game ID");
+        session.getRemote().sendString(new Gson().toJson(message));
+      }
+      else {
+        if (!gameList.containsKey(gameID)) {
+          gameList.put(gameID, new ConnectionManager());
+        }
+        ServerMessage message=new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, user + " has joined the game as an observer");
+        gameList.get(gameID).add(user, session);
+        gameList.get(gameID).broadcast(user, message);
+
+        ServerMessage loadMessage=new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, data.getGame(gameID).game());
+        gameList.get(gameID).send(user, loadMessage);
+      }
+    }
+    catch(Exception e){
+      gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: " + e.getMessage()));
+    }
+  }
+
   public void leaveGame(Integer gameID, String user) throws IOException {
     try {
       GameData game = data.getGame(gameID);
