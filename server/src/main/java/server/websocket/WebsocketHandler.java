@@ -202,6 +202,18 @@ public class WebsocketHandler {
         gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
         String message = user + " moved " + move.getStartPosition().toString() + "to " + move.getEndPosition().toString();
         gameList.get(gameID).broadcast(user, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
+        if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
+          gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "White is in Checkmate, game over!"));
+        }
+        else if(game.isInCheckmate(ChessGame.TeamColor.BLACK)){
+          gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Black is in Checkmate, game over!"));
+        }
+        if(game.isInCheck(ChessGame.TeamColor.WHITE)){
+          gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "White is in Check!"));
+        }
+        else if(game.isInCheck(ChessGame.TeamColor.BLACK)){
+          gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "Black is in Check!"));
+        }
       } else {
         gameList.get(gameID).send(user, new ServerMessage(ServerMessage.ServerMessageType.ERROR, "", "Error: Illegal move"));
       }
