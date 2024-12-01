@@ -118,6 +118,7 @@ public class InGameEvaluator {
         move=new ChessMove(startPos, endPos, null);
       }
       ws.makeMove(auth, currentGameID, move);
+
     }
     catch(Exception e){
       return "Error: " + e.getMessage();

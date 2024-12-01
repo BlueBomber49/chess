@@ -45,7 +45,12 @@ public class WebsocketHandler {
       String user = data.getAuth(token).username();
       switch(commandType){
         case CONNECT -> {
-          joinGame(gameID, user, session, color);
+          if(color != null) {
+            joinGame(gameID, user, session, color);
+          }
+          else{
+            observeGame(gameID, user, session);
+          }
         }
         case LEAVE -> {
           leaveGame(gameID, user);
