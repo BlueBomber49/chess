@@ -191,11 +191,14 @@ public class Client implements NotificationHandler {
         }
       }
       String pieceString = "";
-      ChessPiece piece = board.getPiece(new ChessPosition(row, col));
+      int newcol;
       if(!flipped){
-        int newcol = 9 - col;
-        piece = board.getPiece(new ChessPosition(row, newcol));
+        newcol = 9 - col;
       }
+      else{
+        newcol = col;
+      }
+      ChessPiece piece = board.getPiece(new ChessPosition(row, newcol));
       ChessPiece.PieceType type = null;
       if(piece != null){
         type = piece.getPieceType();
@@ -232,7 +235,7 @@ public class Client implements NotificationHandler {
         System.out.printf(drawBoard(game, color, null));
       }
       case NOTIFICATION -> {
-        System.out.println("Notification: " + message.getMessage());
+        System.out.println(message.getMessage());
       }
       case ERROR -> {
         System.out.println(message.getErrorMessage());

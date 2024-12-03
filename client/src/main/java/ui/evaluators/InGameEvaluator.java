@@ -6,9 +6,7 @@ import ui.Client;
 import ui.State;
 import websocket.WebsocketFacade;
 
-import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 
 import static ui.EscapeSequences.*;
 
@@ -56,11 +54,18 @@ public class InGameEvaluator {
   }
 
   public String highlightBoard(String[] params){
-    var colMap=Map.of("a", 1, "b", 2, "c", 3, "d", 4,
-            "e", 5, "f", 6, "g", 7, "h", 8);
+    Map<String, Integer> colMap;
+    if(color == ChessGame.TeamColor.WHITE) {
+      colMap=Map.of("a", 1, "b", 2, "c", 3, "d", 4,
+              "e", 5, "f", 6, "g", 7, "h", 8);
+    }
+    else{
+      colMap=Map.of("a", 8, "b", 7, "c", 6, "d", 5,
+              "e", 4, "f", 3, "g", 2, "h", 1);
+    }
     String start=params[0];
     if (!start.matches("\\b[a-h][1-8]\\b")) {
-      return "Please use format 'move [start column][start row] [end column][end row]";
+      return "Please use format 'highlight [column][row]";
     }
     int startRow=Integer.parseInt(start.substring(1));
     int startCol=colMap.get(start.substring(0, 1));
@@ -81,7 +86,15 @@ public class InGameEvaluator {
 
   public String resignGame(){
     try{
-      ws.resignGame(auth, currentGameID);
+      System.out.println("Are you sure?  Type 'yes' to confirm");
+      System.out.print(SET_TEXT_COLOR_BLUE + "[" + client.state + "]>> ");
+      var scanner = new Scanner(System.in);
+      if(Objects.equals(scanner.nextLine(), "yes")){
+        ws.resignGame(auth, currentGameID);
+      }
+      else{
+        return "Resignation cancelled.  You are still playing";
+      }
     } catch (ResponseException e) {
       return "Error: " + e.getMessage();
     }
