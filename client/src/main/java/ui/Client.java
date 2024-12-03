@@ -129,9 +129,15 @@ public class Client implements NotificationHandler {
     };
   }
 
-  public String drawBoard(ChessGame game, ChessGame.TeamColor perspective){
+  public String drawBoard(ChessGame game, ChessGame.TeamColor perspective, ArrayList<ChessMove> highlighted){
     boolean flipped;
     String header;
+    ArrayList<ChessPosition> highlightedSquares = new ArrayList<>();
+    if(highlighted != null) {
+      for (ChessMove move : highlighted) {
+        highlightedSquares.add(move.getEndPosition());
+      }
+    }
     if(perspective == ChessGame.TeamColor.WHITE){
       flipped = true;
       header =  SET_BG_COLOR_LIGHT_GREY + SET_TEXT_BOLD + SET_TEXT_COLOR_BLACK +
@@ -146,19 +152,19 @@ public class Client implements NotificationHandler {
     ChessBoard board = game.getBoard();
     if(!flipped) {
       for (var row=1; row <= 8; row++) {
-        boardString += drawRow(board, row, flipped);
+        boardString += drawRow(board, row, flipped, highlightedSquares);
       }
     }
     else {
       for (var row=8; row >= 1; row--) {
-        boardString += drawRow(board, row, flipped);
+        boardString += drawRow(board, row, flipped, highlightedSquares);
       }
     }
     boardString += header + "%n";
     return boardString;
   }
 
-  public String drawRow(ChessBoard board, int row, boolean flipped){
+  public String drawRow(ChessBoard board, int row, boolean flipped, ArrayList<ChessPosition> highlighted){
     String rowString = SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK + " " + row + " ";
     rowString += SET_TEXT_COLOR_LIGHT_GREY;
 
@@ -167,14 +173,22 @@ public class Client implements NotificationHandler {
       whiteSquareRow = 1;
     }
     for(var col = 1; col <= 8; col ++){
-      if(row % 2 == whiteSquareRow && col % 2 == 1){
-        rowString += SET_BG_COLOR_BLACK;
-      }
-      else if(row % 2 != whiteSquareRow && col % 2 == 0){
-        rowString += SET_BG_COLOR_BLACK;
+      var square = new ChessPosition(row, col);
+      if((row % 2 == whiteSquareRow && col % 2 == 1) || row % 2 != whiteSquareRow && col % 2 == 0){
+        if(highlighted.contains(square)){
+          rowString+=SET_BG_COLOR_DARK_GREEN;
+        }
+        else {
+          rowString+=SET_BG_COLOR_BLACK;
+        }
       }
       else {
-        rowString += SET_BG_COLOR_WHITE;
+        if(highlighted.contains(square)){
+          rowString+=SET_BG_COLOR_GREEN;
+        }
+        else {
+          rowString+=SET_BG_COLOR_WHITE;
+        }
       }
       String pieceString = "";
       ChessPiece piece = board.getPiece(new ChessPosition(row, col));
@@ -188,19 +202,18 @@ public class Client implements NotificationHandler {
       }
 
       switch(type) {
-        case ROOK -> pieceString += " r";
-        case BISHOP -> pieceString += " b";
-        case KNIGHT -> pieceString += " n";
-        case QUEEN -> pieceString += " q";
-        case KING -> pieceString += " k";
-        case PAWN -> pieceString += " p";
-        case null -> pieceString += "  ";
+        case ROOK -> pieceString += " r ";
+        case BISHOP -> pieceString += " b ";
+        case KNIGHT -> pieceString += " n ";
+        case QUEEN -> pieceString += " q ";
+        case KING -> pieceString += " k ";
+        case PAWN -> pieceString += " p ";
+        case null -> pieceString += "   ";
       }
 
       if(piece != null && piece.getTeamColor().equals(ChessGame.TeamColor.WHITE)){
         pieceString = pieceString.toUpperCase(Locale.ROOT);
       }
-      pieceString += " ";
       rowString += pieceString;
     }
     rowString += SET_BG_COLOR_LIGHT_GREY + SET_TEXT_COLOR_BLACK;
@@ -216,7 +229,7 @@ public class Client implements NotificationHandler {
       case LOAD_GAME -> {
         ChessGame game = message.getGame();
         this.game = game;
-        System.out.printf(drawBoard(game, color));
+        System.out.printf(drawBoard(game, color, null));
       }
       case NOTIFICATION -> {
         System.out.println("Notification: " + message.getMessage());

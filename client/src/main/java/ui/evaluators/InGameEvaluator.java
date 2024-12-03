@@ -6,6 +6,7 @@ import ui.Client;
 import ui.State;
 import websocket.WebsocketFacade;
 
+import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Map;
 
@@ -37,13 +38,13 @@ public class InGameEvaluator {
         return leaveGame();
       }
       case "redraw" -> {
-        return client.drawBoard(game, color);
+        return client.drawBoard(game, color, null);
       }
       case "resign" -> {
         return resignGame();
       }
       case "highlight" -> {
-        return "I would love to highlight the board right now";
+        return highlightBoard(params);
       }
       case "move" -> {
         return makeMove(params);
@@ -52,6 +53,20 @@ public class InGameEvaluator {
         return "Not a recognized command.  Type 'help' for a list of commands";
       }
     }
+  }
+
+  public String highlightBoard(String[] params){
+    var colMap=Map.of("a", 1, "b", 2, "c", 3, "d", 4,
+            "e", 5, "f", 6, "g", 7, "h", 8);
+    String start=params[0];
+    if (!start.matches("\\b[a-h][1-8]\\b")) {
+      return "Please use format 'move [start column][start row] [end column][end row]";
+    }
+    int startRow=Integer.parseInt(start.substring(1));
+    int startCol=colMap.get(start.substring(0, 1));
+    ChessPosition startPos=new ChessPosition(startRow, startCol);
+    ArrayList<ChessMove> validMoves =(ArrayList<ChessMove>) game.validMoves(startPos);
+    return client.drawBoard(game, color, validMoves);
   }
   public String leaveGame(){
     try {
