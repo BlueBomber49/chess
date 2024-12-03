@@ -200,7 +200,7 @@ public class WebsocketHandler {
         GameData updatedGame = new GameData(gameData.gameId(), gameData.whiteUsername(), gameData.blackUsername(), gameData.gameName(), game);
         data.updateGame(updatedGame);
         gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, game));
-        String message = user + " moved " + move.getStartPosition().toString() + "to " + move.getEndPosition().toString();
+        String message = user + " moved " + move.getStartPosition().toString() + " to " + move.getEndPosition().toString();
         gameList.get(gameID).broadcast(user, new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message));
         if(game.isInCheckmate(ChessGame.TeamColor.WHITE)){
           gameList.get(gameID).broadcast("", new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, "White is in Checkmate, game over!"));

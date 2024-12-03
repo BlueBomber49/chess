@@ -235,7 +235,7 @@ public class Client implements NotificationHandler {
         System.out.println("Notification: " + message.getMessage());
       }
       case ERROR -> {
-        System.out.println("Error: " + message.getErrorMessage());
+        System.out.println(message.getErrorMessage());
       }
     }
     System.out.print(SET_TEXT_COLOR_BLUE + "[" + state + "]>> ");
