@@ -55,14 +55,8 @@ public class InGameEvaluator {
 
   public String highlightBoard(String[] params){
     Map<String, Integer> colMap;
-    if(color == ChessGame.TeamColor.WHITE) {
-      colMap=Map.of("a", 1, "b", 2, "c", 3, "d", 4,
+    colMap=Map.of("a", 1, "b", 2, "c", 3, "d", 4,
               "e", 5, "f", 6, "g", 7, "h", 8);
-    }
-    else{
-      colMap=Map.of("a", 8, "b", 7, "c", 6, "d", 5,
-              "e", 4, "f", 3, "g", 2, "h", 1);
-    }
     String start=params[0];
     if (!start.matches("\\b[a-h][1-8]\\b")) {
       return "Please use format 'highlight [column][row]";

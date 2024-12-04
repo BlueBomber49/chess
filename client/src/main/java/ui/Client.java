@@ -173,8 +173,15 @@ public class Client implements NotificationHandler {
       whiteSquareRow = 1;
     }
     for(var col = 1; col <= 8; col ++){
-      var square = new ChessPosition(row, col);
-      if((row % 2 == whiteSquareRow && col % 2 == 1) || row % 2 != whiteSquareRow && col % 2 == 0){
+      int newcol;
+      if(!flipped){
+        newcol = 9 - col;
+      }
+      else{
+        newcol = col;
+      }
+      var square = new ChessPosition(row, newcol);
+      if((row % 2 == whiteSquareRow && newcol % 2 == 1) || row % 2 != whiteSquareRow && newcol % 2 == 0){
         if(highlighted.contains(square)){
           rowString+=SET_BG_COLOR_DARK_GREEN;
         }
@@ -191,13 +198,7 @@ public class Client implements NotificationHandler {
         }
       }
       String pieceString = "";
-      int newcol;
-      if(!flipped){
-        newcol = 9 - col;
-      }
-      else{
-        newcol = col;
-      }
+
       ChessPiece piece = board.getPiece(new ChessPosition(row, newcol));
       ChessPiece.PieceType type = null;
       if(piece != null){
